@@ -1,5 +1,7 @@
 import ipywidgets as wdg
 
+from common import AIIDA_PROFILE, STYLE
+
 try:
     from aiida import load_profile, orm
 except ImportError:
@@ -7,14 +9,16 @@ except ImportError:
 else:
     WITH_AIIDA = True
     try:
-        load_profile()
+        load_profile(AIIDA_PROFILE)
     except Exception:
         print("Could not load AiiDA profile. Please ensure AiiDA is properly configured.")
         WITH_AIIDA = False
 
-STYLE = {'description_width': '150px', 'width': '400px'}
 
-def click_param_to_widget(param_info: dict) -> wdg.Widget:
+def click_param_to_widget(
+        param_info: dict,
+        override_defaults: dict = None,
+    ) -> wdg.Widget:
     """Generate ipywidgets for a given parameter info dictionary.
 
     Args:
@@ -23,8 +27,12 @@ def click_param_to_widget(param_info: dict) -> wdg.Widget:
     Returns:
         wdg.Widget: Corresponding ipywidget.
     """
+    override_defaults = override_defaults or {}
+
     name = param_info['name']
     default_value = param_info.get('default', None)
+    # Apply override if provided
+    default_value = override_defaults.get(name, default_value)
     help_str = param_info.get('help', name) or name
     type_dct = param_info['type']
     type_str = type_dct['param_type']
@@ -100,7 +108,10 @@ def click_param_to_widget(param_info: dict) -> wdg.Widget:
     return widget_cls(**widget_kwargs)
 
 
-def get_widgets_from_click_function(function: callable, layout_width: str = '400px') -> dict:
+def get_widgets_from_click_function(
+        function: callable, layout_width: str = '400px',
+        override_defaults: dict = None,
+    ) -> dict:
     """
     Generate ipywidgets for the parameters of a given function.
 
@@ -110,13 +121,12 @@ def get_widgets_from_click_function(function: callable, layout_width: str = '400
     Returns:
     dict: A dictionary mapping parameter names to their corresponding widgets.
     """
-   
     params_infos = [p.to_info_dict() for p in function.params]
     widgets = {}
 
     for info in params_infos:
         param_name = info['name']
-        widget = click_param_to_widget(info)
+        widget = click_param_to_widget(info, override_defaults=override_defaults)
         widget.layout.width = layout_width
         widgets[param_name] = widget
     return widgets
