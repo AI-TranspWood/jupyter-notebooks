@@ -15,7 +15,7 @@ EESSI_EXTEND_SOFTWARE_PATH = (
     'software' / EESSI_OS_TYPE / EESSI_SOFTWARE_SUBDIR / 'software'
 ).as_posix()
 
-STYLE = {'description_width': '150px', 'width': '400px'}
+STYLE = {'description_width': '150px', 'width': '600px'}
 AIIDA_PROFILE = 'AITW_aiida'
 VISCOSITY_WORKCHAIN_DEFAULTS = {
     'num_steps': 5000,
