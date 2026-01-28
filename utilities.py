@@ -75,16 +75,17 @@ def click_param_to_widget(
                 'max': max_val,
             })
     elif type_str.startswith('Float'):
-        min_val = type_dct.get('min', None)
-        max_val = type_dct.get('max', None)
-        if min_val is None or max_val is None:
-            widget_cls = wdg.FloatText
-        else:
-            widget_cls = wdg.FloatSlider
-            widget_kwargs.update({
-                'min': min_val,
-                'max': max_val,
-            })
+        widget_cls = wdg.FloatText
+        # min_val = type_dct.get('min', None)
+        # max_val = type_dct.get('max', None)
+        # if min_val is None or max_val is None:
+        #     widget_cls = wdg.FloatText
+        # else:
+        #     widget_cls = wdg.FloatSlider
+        #     widget_kwargs.update({
+        #         'min': min_val,
+        #         'max': max_val,
+        #     })
     elif type_str.startswith('String'):
         widget_cls = wdg.Text
     elif type_str.startswith('Bool'):
