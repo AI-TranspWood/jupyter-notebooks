@@ -17,6 +17,14 @@ EESSI_EXTEND_SOFTWARE_PATH = (
 
 STYLE = {'description_width': '150px', 'width': '600px'}
 AIIDA_PROFILE = 'AITW_aiida'
+
+STIFFNESS_DEFAULTS = {
+    'input_file': 'example-inputs/SurrogateStiffness.json',
+    'output_file': 'stiffness_results.json',
+    'lower_bound_percentage': 0.05,
+    'upper_bound_percentage': 0.95,
+}
+
 VISCOSITY_WORKCHAIN_DEFAULTS = {
     'num_steps': 5000,
     'smiles_string': 'CC(=C)C(=O)OC1C[C@H]2CC[C@]1(C)C2(C)C',
