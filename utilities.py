@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 import ipywidgets as wdg
 
 from common import AIIDA_PROFILE, STYLE
@@ -8,16 +10,28 @@ except ImportError:
     WITH_AIIDA = False
 else:
     WITH_AIIDA = True
-    try:
-        load_profile(AIIDA_PROFILE)
-    except Exception:
-        print("Could not load AiiDA profile. Please ensure AiiDA is properly configured.")
-        WITH_AIIDA = False
 
+@contextmanager
+def with_aiida_profile(profile_name: str):
+    """Context manager to check if AiiDA is setup with a profile available.
+
+    Args:
+        profile_name (str): Name of the AiiDA profile to switch to.
+    """
+    if not WITH_AIIDA:
+        raise ImportError("AiiDA is not available.")
+    try:
+        load_profile(profile_name)
+        yield
+    except Exception as e:
+        raise RuntimeError(f"Could not load AiiDA profile '{profile_name}': {e}")
+    finally:
+        pass
 
 def click_param_to_widget(
         param_info: dict,
         override_defaults: dict = None,
+        code_map: dict = None,
     ) -> wdg.Widget:
     """Generate ipywidgets for a given parameter info dictionary.
 
@@ -28,6 +42,7 @@ def click_param_to_widget(
         wdg.Widget: Corresponding ipywidget.
     """
     override_defaults = override_defaults or {}
+    code_map = code_map or {}
 
     name = param_info['name']
     default_value = param_info.get('default', None)
@@ -75,7 +90,7 @@ def click_param_to_widget(
     elif type_str.startswith('Bool'):
         widget_cls = wdg.Checkbox
     elif type_str.startswith('Choice'):
-        widget_cls = wdg.Dropdown
+        widget_cls = wdg.Select
         choices = type_dct.get('choices', [])
         widget_kwargs.update({
             'options': choices,
@@ -83,17 +98,24 @@ def click_param_to_widget(
     elif type_str.startswith('Path'):
         widget_cls = wdg.Text
     elif type_str == 'Code':
-        if not WITH_AIIDA:
-            raise ImportError("AiiDA is required to create a Code widget.")
         widget_cls = wdg.Dropdown
-        qb = orm.QueryBuilder()
-        qb.append(orm.Code)
-        codes = [_[0] for _ in qb.all()]
+
+        with with_aiida_profile(AIIDA_PROFILE):
+            qb = orm.QueryBuilder()
+            qb.append(orm.Code)
+            codes = [_[0] for _ in qb.all()]
         codes_str = [f'{code.label}@{code.computer.label}' for code in codes]
+        value = None
+        for code in codes:
+            expected = code_map.get(name, None)
+            # print('Expected code for', name, ':', expected, ' - checking code:', code.label)
+            if expected is not None and code.label == expected:
+                value = f'{code.label}@{code.computer.label}'
+                break
         widget_kwargs.update({
             'options': codes_str,
-            'value': None
         })
+        default_value = value
     else:
         raise ValueError(f"Unsupported parameter type: {type_str}")
 
@@ -109,8 +131,8 @@ def click_param_to_widget(
 
 
 def get_widgets_from_click_function(
-        function: callable, layout_width: str = '400px',
-        override_defaults: dict = None,
+        function: callable, layout_width: str = '600px',
+        **kwargs
     ) -> dict:
     """
     Generate ipywidgets for the parameters of a given function.
@@ -126,7 +148,7 @@ def get_widgets_from_click_function(
 
     for info in params_infos:
         param_name = info['name']
-        widget = click_param_to_widget(info, override_defaults=override_defaults)
+        widget = click_param_to_widget(info, **kwargs)
         widget.layout.width = layout_width
         widgets[param_name] = widget
     return widgets
@@ -166,10 +188,5 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
             args.append(opt)
             if not info.get('count', False):
                 args.append(value_str)
-
-    #     # print("Parameter:", name, "   Value:", value_str)
-    #     print(f"Parameter: {name:>30s}   Value_str: {value_str:>10s}  Opt: {str(opt):>15s}  Opt_sec: {str(opt_sec):>15s}")
-
-    # print(args)
 
     return args
