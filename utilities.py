@@ -1,32 +1,8 @@
-from contextlib import contextmanager
-
 import ipywidgets as wdg
 
 from common import AIIDA_PROFILE, STYLE
+from utilities_aiida import get_all_codes
 
-try:
-    from aiida import load_profile, orm
-except ImportError:
-    WITH_AIIDA = False
-else:
-    WITH_AIIDA = True
-
-@contextmanager
-def with_aiida_profile(profile_name: str):
-    """Context manager to check if AiiDA is setup with a profile available.
-
-    Args:
-        profile_name (str): Name of the AiiDA profile to switch to.
-    """
-    if not WITH_AIIDA:
-        raise ImportError("AiiDA is not available.")
-    try:
-        load_profile(profile_name)
-        yield
-    except Exception as e:
-        raise RuntimeError(f"Could not load AiiDA profile '{profile_name}': {e}")
-    finally:
-        pass
 
 def click_param_to_widget(
         param_info: dict,
@@ -73,19 +49,10 @@ def click_param_to_widget(
             widget_kwargs.update({
                 'min': min_val,
                 'max': max_val,
+                'step': 1,
             })
     elif type_str.startswith('Float'):
         widget_cls = wdg.FloatText
-        # min_val = type_dct.get('min', None)
-        # max_val = type_dct.get('max', None)
-        # if min_val is None or max_val is None:
-        #     widget_cls = wdg.FloatText
-        # else:
-        #     widget_cls = wdg.FloatSlider
-        #     widget_kwargs.update({
-        #         'min': min_val,
-        #         'max': max_val,
-        #     })
     elif type_str.startswith('String'):
         widget_cls = wdg.Text
     elif type_str.startswith('Bool'):
@@ -101,10 +68,7 @@ def click_param_to_widget(
     elif type_str == 'Code':
         widget_cls = wdg.Dropdown
 
-        with with_aiida_profile(AIIDA_PROFILE):
-            qb = orm.QueryBuilder()
-            qb.append(orm.Code)
-            codes = [_[0] for _ in qb.all()]
+        codes = get_all_codes()
         codes_str = [f'{code.label}@{code.computer.label}' for code in codes]
         value = None
         for code in codes:

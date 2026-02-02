@@ -1,19 +1,48 @@
 import os
 import pathlib
-import sys
+from contextlib import contextmanager
+from functools import wraps
 
 try:
     from aiida import load_profile, orm
     from aiida.orm import load_code, load_computer
     from aiida_shell.data.code import ShellCode
 except ImportError:
-    print("AiiDA is not installed. Please install AiiDA to use this module.")
-    sys.exit(1)
+    WITH_AIIDA = False
+else:
+    WITH_AIIDA = True
 
 from common import AIIDA_PROFILE
 
 HOME = pathlib.Path.home()
 
+# Decorator to check that AiiDA is available
+def with_aiida(func):
+    """Decorator to ensure AiiDA is available before executing the function."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not WITH_AIIDA:
+            raise ImportError("AiiDA is not available. Please install AiiDA to use this function.")
+        return func(*args, **kwargs)
+    return wrapper
+
+@contextmanager
+@with_aiida
+def with_aiida_profile(profile_name: str):
+    """Context manager to check if AiiDA is setup with a profile available.
+
+    Args:
+        profile_name (str): Name of the AiiDA profile to switch to.
+    """
+    try:
+        load_profile(profile_name)
+        yield
+    except Exception as e:
+        raise RuntimeError(f"Could not load AiiDA profile '{profile_name}': {e}")
+    finally:
+        pass
+
+@with_aiida
 def setup_profile():
     """Setup AiiDA profile."""
     AIIDA_PATH = pathlib.Path(os.getenv('AIIDA_PATH', HOME / '.aiida_aitw'))
@@ -41,6 +70,7 @@ def setup_profile():
 
     return profile
 
+@with_aiida
 def setup_computer():
     """Setup codes for the workflow."""
     try:
@@ -73,6 +103,7 @@ def setup_computer():
     
     return computer
 
+@with_aiida
 def setup_codes(code_infos: dict):
     computer = setup_computer()
     computer_label = computer.label
@@ -92,5 +123,14 @@ def setup_codes(code_infos: dict):
             code.store()
         # print(f"Using code: {code}")
         codes.append(code)
+
+    return codes
+
+@with_aiida
+def get_all_codes():
+    """Retrieve all codes from the AiiDA database."""
+    qb = orm.QueryBuilder()
+    qb.append(orm.Code)
+    codes = [_[0] for _ in qb.all()]
 
     return codes

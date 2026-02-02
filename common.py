@@ -22,6 +22,7 @@ WOOD_MS_DEFAULTS = {
     'wood_type': 'birch',
     'json_file': 'example-inputs/example_birch.json',
     'output_dir': 'wood_ms_results',
+    'output_formats': 'png,tiff',
     'verbose': 1,
 }
 
