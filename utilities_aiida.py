@@ -47,11 +47,14 @@ def with_aiida_profile(profile_name: str = AIIDA_PROFILE):
 def setup_profile():
     """Setup AiiDA profile."""
     AIIDA_PATH = pathlib.Path(os.getenv('AIIDA_PATH', HOME / '.aiida_aitw'))
+    
     try:
         profile = load_profile(AIIDA_PROFILE)
     except:
         from aiida.manage.configuration import create_profile
         from aiida.manage.configuration.config import Config
+
+        AIIDA_PATH.mkdir(parents=True, exist_ok=True)
 
         filepath = AIIDA_PATH / 'config.json'
         config = Config.from_file(filepath=filepath)
