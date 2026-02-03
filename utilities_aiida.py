@@ -101,7 +101,7 @@ def setup_computer():
         computer.set_mpirun_command('mpirun -np {tot_num_mpiprocs}'.split())
         computer.set_use_double_quotes(True)
         computer.set_shebang('#!/bin/bash')
-        computer.set_workdir((HOME / '.aiida123').as_posix())
+        computer.set_workdir((HOME / '.aiida_workdir').as_posix())
         computer.store()
         computer.configure()
     
