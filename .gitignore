@@ -1,3 +1,7 @@
+wood_ms_results
+viscosity_plots
+stiffness_results.json
+
 # Django #
 *.log
 *.pot
