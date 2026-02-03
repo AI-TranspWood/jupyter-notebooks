@@ -5,6 +5,7 @@ from functools import wraps
 
 try:
     from aiida import load_profile, orm
+    from aiida.manage.configuration import profile_context
     from aiida.orm import load_code, load_computer
     from aiida_shell.data.code import ShellCode
 except ImportError:
@@ -28,15 +29,15 @@ def with_aiida(func):
 
 @contextmanager
 @with_aiida
-def with_aiida_profile(profile_name: str):
+def with_aiida_profile(profile_name: str = AIIDA_PROFILE):
     """Context manager to check if AiiDA is setup with a profile available.
 
     Args:
         profile_name (str): Name of the AiiDA profile to switch to.
     """
     try:
-        load_profile(profile_name)
-        yield
+        with profile_context(profile_name, allow_switch=True) as profile:
+            yield profile
     except Exception as e:
         raise RuntimeError(f"Could not load AiiDA profile '{profile_name}': {e}")
     finally:
