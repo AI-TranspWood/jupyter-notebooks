@@ -1,5 +1,13 @@
 import os
 import pathlib
+
+AIIDA_PATH = os.getenv('AIIDA_PATH')
+if AIIDA_PATH is not None:
+    AIIDA_PATH = pathlib.Path(AIIDA_PATH)
+else:
+    AIIDA_PATH = pathlib.Path.home() / '.aiida_aitw'
+    os.environ['AIIDA_PATH'] = AIIDA_PATH.as_posix()
+
 from contextlib import contextmanager
 from functools import wraps
 
@@ -46,8 +54,6 @@ def with_aiida_profile(profile_name: str = AIIDA_PROFILE):
 @with_aiida
 def setup_profile():
     """Setup AiiDA profile."""
-    AIIDA_PATH = pathlib.Path(os.getenv('AIIDA_PATH', HOME / '.aiida_aitw'))
-    
     try:
         profile = load_profile(AIIDA_PROFILE)
     except:

@@ -1,6 +1,6 @@
 import ipywidgets as wdg
 
-from common import AIIDA_PROFILE, STYLE
+from common import STYLE
 from utilities_aiida import get_all_codes
 
 
