@@ -1,3 +1,9 @@
+- title: README
+  description: Notebooks description
+  source: ./README.md
+  type: markdown
+  catalog: AITW
+  icon: ./images/AITW_logo.svg
 - title: Molecular Viscosity
   description: |
     Jupyter Notebook interface to the `aitw-viscosity` commands for computing molecular viscosities starting from a
