@@ -60,19 +60,13 @@ VISCOSITY_CODE_MAP = {
 VISCOSITY_CODES = {
     'acpype': {
         # 'filepath_executable': '$HOME/eessi/versions/2023.06/software/linux/x86_64/intel/haswell/software/acpype/2023.10.27-foss-2023a/bin/acpype',
-        'filepath_executable': f'{EESSI_EXTEND_SOFTWARE_PATH}/acpype/2023.10.27-foss-2023a/bin/acpype',
-        'req_mods': [
-            'EESSI-extend',
-            'acpype/2023.10.27-foss-2023a'
-        ],
+        'filepath_executable': f'{EESSI_SOFTWARE_PATH}/software/acpype/2023.10.27-foss-2023a/bin/acpype',
+        'req_mods': ['acpype/2023.10.27-foss-2023a'],
     },
     'obabel': {
         # 'filepath_executable': '$HOME/eessi/versions/2023.06/software/linux/x86_64/intel/haswell/software/OpenBabel/3.1.1-gompi-2023a/bin/obabel',
-        'filepath_executable': f'{EESSI_EXTEND_SOFTWARE_PATH}/OpenBabel/3.1.1-gompi-2023a/bin/obabel',
-        'req_mods': [
-            'EESSI-extend',
-            'OpenBabel/3.1.1-gompi-2023a'
-        ],
+        'filepath_executable': f'{EESSI_SOFTWARE_PATH}/software/OpenBabel/3.1.1-gompi-2023a/bin/obabel',
+        'req_mods': ['OpenBabel/3.1.1-gompi-2023a'],
     },
     'veloxchem': {
         # 'filepath_executable': '/cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/intel/haswell/software/Python/3.11.3-GCCcore-12.3.0/bin/python',
