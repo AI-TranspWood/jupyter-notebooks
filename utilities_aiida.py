@@ -5,7 +5,7 @@ AIIDA_PATH = os.getenv('AIIDA_PATH')
 if AIIDA_PATH is not None:
     AIIDA_PATH = pathlib.Path(AIIDA_PATH)
 else:
-    AIIDA_PATH = pathlib.Path.home() / '.aiida_aitw'
+    AIIDA_PATH = pathlib.Path.home()
     os.environ['AIIDA_PATH'] = AIIDA_PATH.as_posix()
 
 from contextlib import contextmanager
@@ -62,7 +62,7 @@ def setup_profile():
 
         AIIDA_PATH.mkdir(parents=True, exist_ok=True)
 
-        filepath = AIIDA_PATH / 'config.json'
+        filepath = AIIDA_PATH / '.aiida' / 'config.json'
         config = Config.from_file(filepath=filepath)
         profile = create_profile(
             config=config,
