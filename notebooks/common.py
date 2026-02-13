@@ -21,15 +21,15 @@ AIIDA_PROFILE = 'AITW_aiida'
 
 WOOD_MS_DEFAULTS = {
     'wood_type': 'birch',
-    'json_file': 'example-inputs/example_birch.json',
-    'output_dir': 'wood_ms_results',
+    'json_file': '../example-inputs/example_birch.json',
+    'output_dir': '../results/wood_ms_results',
     'output_formats': 'png,tiff',
     'verbose': 1,
 }
 
 STIFFNESS_DEFAULTS = {
-    'input_file': 'example-inputs/SurrogateStiffness.json',
-    'output_file': 'stiffness_results.json',
+    'input_file': '../example-inputs/SurrogateStiffness.json',
+    'output_file': '../results/stiffness_results.json',
     'lower_bound_percentage': 0.05,
     'upper_bound_percentage': 0.95,
 }

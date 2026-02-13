@@ -11,7 +11,7 @@
   description: |
     Jupyter Notebook interface to the `aitw-viscosity` commands for computing molecular viscosities starting from a
     SMILES code using GROMACS.
-  source: /voila/render/MolecularViscosity.ipynb
+  source: /voila/render/notebooks/MolecularViscosity.ipynb
   type: url
   icon: ./images/AITW_logo.svg
   args:
@@ -23,7 +23,7 @@
 - title: Surrogate Stiffness
   description: Jupyter Notebook interface to the `aitw-stiffness` command for computing the stiffness of wood fibers
     using a TensorFlow Probability based surrogate model
-  source: /voila/render/SurrogateStiffness.ipynb
+  source: /voila/render/notebooks/SurrogateStiffness.ipynb
   type: url
   icon: ./images/AITW_logo.svg
   args:
@@ -35,7 +35,7 @@
 - title: Wood Microstructures
   description: Jupyter Notebook interface to the `wood_ms` command for generating wood microstructures both with and
     without the use of a surrogate model.
-  source: /voila/render/WoodMicrostructureGeneration.ipynb
+  source: /voila/render/notebooks/WoodMicrostructureGeneration.ipynb
   type: url
   icon: ./images/AITW_logo.svg
   args:
@@ -49,7 +49,7 @@
 - title: AiiDA REST API
   description: Launch the AiiDA REST API in a terminal tab
   type: terminal
-  source: './launch_restapi.sh'
+  source: './scripts/launch_restapi.sh'
   cwd: './'
   args:
     reuse: true
