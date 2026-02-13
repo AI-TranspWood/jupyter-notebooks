@@ -38,3 +38,28 @@
       referrerPolicy: ['no-referrer']
       createNewWindow: false
   catalog: AITW
+
+- title: AiiDA REST API
+  description: Launch the AiiDA REST API in a terminal tab
+  type: terminal
+  source: './launch_restapi.sh'
+  cwd: './'
+  args:
+    reuse: true
+  catalog: AiiDA
+
+
+- title: AiiDA explorer
+  description: Example of opening a URL in a tab
+  source: https://aiidateam.github.io/aiida-explorer/?api_url=http://127.0.0.1:5000/api/v4
+  type: url
+  args:
+    sandbox:
+      [
+        'allow-same-origin',
+        'allow-scripts',
+        'allow-downloads',
+        'allow-modals',
+        'allow-popups'
+      ]
+  catalog: AiiDA
