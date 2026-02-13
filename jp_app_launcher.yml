@@ -1,3 +1,5 @@
+######################################################################
+# AITW
 - title: README
   description: Notebooks description
   source: ./README.md
@@ -11,6 +13,7 @@
     SMILES code using GROMACS.
   source: /voila/render/MolecularViscosity.ipynb
   type: url
+  icon: ./images/AITW_logo.svg
   args:
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
@@ -22,6 +25,7 @@
     using a TensorFlow Probability based surrogate model
   source: /voila/render/SurrogateStiffness.ipynb
   type: url
+  icon: ./images/AITW_logo.svg
   args:
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
@@ -33,12 +37,15 @@
     without the use of a surrogate model.
   source: /voila/render/WoodMicrostructureGeneration.ipynb
   type: url
+  icon: ./images/AITW_logo.svg
   args:
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
       createNewWindow: false
   catalog: AITW
 
+######################################################################
+# AiiDA
 - title: AiiDA REST API
   description: Launch the AiiDA REST API in a terminal tab
   type: terminal
@@ -63,3 +70,22 @@
         'allow-popups'
       ]
   catalog: AiiDA
+
+######################################################################
+# Manage
+- title: UPDATE
+  description: Pull the latest version of the notebooks
+  type: terminal
+  source: 'git pull origin main'
+  cwd: './'
+  args:
+    reuse: true
+  catalog: MANAGE
+# - title: Shutdown extension
+#   description: Force a restart of the extension to update the Luancher and re-run the initialization scripts
+#   type: terminal
+#   source: 'ps -aux | grep "jupyter-lab" | grep -v grep | tr -s " " | cut -d" " -f2 | xargs kill'
+#   cwd: './'
+#   args:
+#     reuse: true
+#   catalog: MANAGE
