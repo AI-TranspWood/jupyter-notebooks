@@ -4,22 +4,37 @@
   type: markdown
   catalog: AITW
   icon: ./images/AITW_logo.svg
+
 - title: Molecular Viscosity
   description: |
     Jupyter Notebook interface to the `aitw-viscosity` commands for computing molecular viscosities starting from a
     SMILES code using GROMACS.
-  source: ./MolecularViscosity.ipynb
-  type: notebook
+  source: /voila/render/MolecularViscosity.ipynb
+  type: url
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
   catalog: AITW
+
 - title: Surrogate Stiffness
   description: Jupyter Notebook interface to the `aitw-stiffness` command for computing the stiffness of wood fibers
     using a TensorFlow Probability based surrogate model
-  source: ./SurrogateStiffness.ipynb
-  type: notebook
+  source: /voila/render/SurrogateStiffness.ipynb
+  type: url
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
   catalog: AITW
+
 - title: Wood Microstructures
   description: Jupyter Notebook interface to the `wood_ms` command for generating wood microstructures both with and
     without the use of a surrogate model.
-  source: ./WoodMicrostructureGeneration.ipynb
-  type: notebook
+  source: /voila/render/WoodMicrostructureGeneration.ipynb
+  type: url
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
   catalog: AITW
