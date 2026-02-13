@@ -10,10 +10,11 @@ EESSI_OS_TYPE = os.getenv('EESSI_OS_TYPE')
 EESSI_SOFTWARE_PATH = os.getenv('EESSI_SOFTWARE_PATH')
 EESSI_VERSION = os.getenv('EESSI_VERSION')
 
-EESSI_EXTEND_SOFTWARE_PATH = (
-    home / 'eessi' / 'versions' / EESSI_VERSION /
-    'software' / EESSI_OS_TYPE / EESSI_SOFTWARE_SUBDIR / 'software'
-).as_posix()
+if EESSI_VERSION:
+    EESSI_EXTEND_SOFTWARE_PATH = (
+        home / 'eessi' / 'versions' / EESSI_VERSION /
+        'software' / EESSI_OS_TYPE / EESSI_SOFTWARE_SUBDIR / 'software'
+    ).as_posix()
 
 STYLE = {'description_width': '150px', 'width': '600px'}
 AIIDA_PROFILE = 'AITW_aiida'

@@ -1,3 +1,5 @@
+from functools import wraps
+
 import ipywidgets as wdg
 
 from common import STYLE
@@ -155,3 +157,43 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
                 args.append(value_str)
 
     return args
+
+def widget_button_running(
+        running_style: str = 'success',
+        running_text: str = 'Running...',
+        running_icon: str = 'spinner fa-spin',
+        running_disabled: bool = True,
+    ):
+    """Decorator for on_click handlers to set button state to running while the function is executing.
+    Resets the button state after the function finishes, even if an error occurs.
+    
+    Args:
+        running_style (str): Button style to use while running.
+        running_text (str): Button text to use while running.
+        running_icon (str): Button icon to use while running.
+        running_disabled (bool): Whether to disable the button while running.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(button):
+            original_style = button.button_style
+            original_text = button.description
+            original_icon = button.icon
+            original_state = button.disabled
+
+            button.button_style = running_style
+            button.description = running_text
+            button.icon = running_icon
+            button.disabled = running_disabled
+
+            res = None
+            try:
+                res = func(button)
+            finally:
+                button.button_style = original_style
+                button.description = original_text
+                button.icon = original_icon
+                button.disabled = original_state
+            return res
+        return wrapper
+    return decorator
