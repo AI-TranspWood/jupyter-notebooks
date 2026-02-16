@@ -43,7 +43,7 @@ VISCOSITY_WORKCHAIN_DEFAULTS = {
     'num_steps_equilibration': 500,
     'num_steps_min': 100,
     'num_steps_eq': 500,
-    'force_field': 'gaff',
+    'force_field': 'gaff2',
     'nmols': 1000,
     'time_step': 0.001,
     'averaging_start_time': 0.1,
