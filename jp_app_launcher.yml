@@ -58,7 +58,7 @@
 
 - title: AiiDA explorer
   description: Example of opening a URL in a tab
-  source: https://aiidateam.github.io/aiida-explorer/?api_url=http://127.0.0.1:5000/api/v4
+  source: https://aiidateam.github.io/aiida-explorer/?api_url=http://127.0.0.1:47812/api/v4
   type: url
   args:
     sandbox:
