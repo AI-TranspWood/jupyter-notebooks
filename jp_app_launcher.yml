@@ -46,29 +46,14 @@
 
 ######################################################################
 # AiiDA
-- title: AiiDA REST API
-  description: Launch the AiiDA REST API in a terminal tab
-  type: terminal
-  source: './scripts/launch_restapi.sh'
-  cwd: './'
+- title: AiiDA Explorer
+  description: Launch AiiDA REST Api + an AiiDA-explorer instance to interact with it.
+  source: http://localhost:$PORT/?api_url=http://127.0.0.1:47811/proxy/5000/api/v4
+  type: local-server
   args:
-    reuse: true
-  catalog: AiiDA
-
-
-- title: AiiDA explorer
-  description: Example of opening a URL in a tab
-  source: https://aiidateam.github.io/aiida-explorer/?api_url=http://127.0.0.1:47812/api/v4
-  type: url
-  args:
-    sandbox:
-      [
-        'allow-same-origin',
-        'allow-scripts',
-        'allow-downloads',
-        'allow-modals',
-        'allow-popups'
-      ]
+    - ./scripts/launch_aiida_explorer.sh
+    - --port
+    - $PORT
   catalog: AiiDA
 
 ######################################################################
