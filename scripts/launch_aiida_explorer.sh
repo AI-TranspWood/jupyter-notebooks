@@ -22,6 +22,10 @@ else
 fi
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
+# Ensure node v24 is being used and also reload npm from nvm to avoid using older one from EESSI
+nvm deactivate
+nvm install 24
+nvm use 24
 
 EXPLORER_DIR="$SCRIPT_DIR/../aiida-explorer"
 if [ ! -d "$EXPLORER_DIR" ]; then
