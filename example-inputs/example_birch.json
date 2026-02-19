@@ -20,7 +20,7 @@
     },
     {
         "sizeVolume": [500,1200,300],
-        "saveSlice": [2,120,200],
+        "saveSlice": [2,60,120,200],
         "random_seed": 4
     }
 ]
