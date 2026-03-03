@@ -9,7 +9,7 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export REST_API_PORT=5000
-$SCRIPT_DIR/launch_restapi.sh --port ${REST_API_PORT} &
+$SCRIPT_DIR/launch_restapi.sh --hostname 0.0.0.0 --port ${REST_API_PORT} &
 REST_API_PID=$!
 
 # Install NVM if not present
