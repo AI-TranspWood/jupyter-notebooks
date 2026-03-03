@@ -48,7 +48,7 @@
 # AiiDA
 - title: AiiDA Explorer
   description: Launch AiiDA REST Api + an AiiDA-explorer instance to interact with it.
-  source: http://localhost:$PORT/?api_url=http://127.0.0.1:47811/proxy/5000/api/v4
+  source: http://localhost:$PORT/?api_url=http://127.0.0.1:${FLASK_PORT_EXT}/api/v4
   type: local-server
   args:
     - ./scripts/launch_aiida_explorer.sh
