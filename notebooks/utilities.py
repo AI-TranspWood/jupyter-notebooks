@@ -1,9 +1,43 @@
+import asyncio
+import contextlib
+import importlib
+import os
+import sys
 from functools import wraps
 
 import ipywidgets as wdg
 from common import STYLE
-from utilities_aiida import get_all_codes
 
+original_sys_path = sys.path.copy()
+
+
+async def initialize_with_module(modules: str | list[str]):
+    """Initialize the environment using a module load command."""
+    if isinstance(modules, str):
+        modules = [modules]
+    try:
+        import module
+    except ImportError:
+        print('Module system not found. Make sure the required python packages are available in the current environment.')
+    else:
+        sys.path = original_sys_path
+        await module.purge(force=True)
+        print('Loading required modules from EESSI...')
+        EESSI_VERSION = os.getenv('REQUIRED_EESSI_VERSION', '2023.06')
+        with open(os.devnull, 'w') as devnull:
+            with contextlib.redirect_stdout(devnull):
+                await module.load(f'EESSI/{EESSI_VERSION}')
+        for mod in modules:
+            await module.load(mod)
+
+        for extra in os.getenv('PYTHONPATH').split(':'):
+            if extra not in sys.path:
+                sys.path.append(extra)
+        for extra in os.getenv('EBPYTHONPREFIXES').split(':'):
+            if extra not in sys.path:
+                sys.path.append(extra)
+
+        importlib.invalidate_caches()
 
 def click_param_to_widget(
         param_info: dict,
@@ -19,6 +53,8 @@ def click_param_to_widget(
     Returns:
         wdg.Widget: Corresponding ipywidget.
     """
+    from utilities_aiida import get_all_codes
+
     override_defaults = override_defaults or {}
     code_map = code_map or {}
 
