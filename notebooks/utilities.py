@@ -22,20 +22,15 @@ async def initialize_with_module(modules: str | list[str]):
     else:
         sys.path = original_sys_path
         await module.purge(force=True)
+
         print('Loading required modules from EESSI...')
         EESSI_VERSION = os.getenv('REQUIRED_EESSI_VERSION', '2023.06')
         with open(os.devnull, 'w') as devnull:
             with contextlib.redirect_stdout(devnull):
                 await module.load(f'EESSI/{EESSI_VERSION}')
+
         for mod in modules:
             await module.load(mod)
-
-        for extra in os.getenv('PYTHONPATH').split(':'):
-            if extra not in sys.path:
-                sys.path.append(extra)
-        for extra in os.getenv('EBPYTHONPREFIXES').split(':'):
-            if extra not in sys.path:
-                sys.path.append(extra)
 
         importlib.invalidate_caches()
 
