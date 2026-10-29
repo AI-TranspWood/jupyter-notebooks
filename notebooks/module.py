@@ -89,12 +89,14 @@ def update_sys_path(env_var, postfix=""):
                 orig_paths = [os.path.join(path, postfix) for path in orig_paths]
             else:
                 orig_paths = []
+            print(f"-- Original sys.path for {env_var}: {orig_paths}")
             output = await function(*args, **kargs)
             if env_var in os.environ:
                 new_paths = os.environ[env_var].split(os.pathsep)
                 new_paths = [os.path.join(path, postfix) for path in new_paths]
             else:
                 new_paths = []
+            print(f"-- New sys.path for {env_var}: {new_paths}")
 
             paths_to_del = set(orig_paths) - set(new_paths)
             paths_to_add = set(new_paths) - set(orig_paths)
@@ -105,6 +107,7 @@ def update_sys_path(env_var, postfix=""):
                 except ValueError:
                     continue
             sys.path.extend(paths_to_add)
+            print(f"-- Updated sys.path with {env_var} changes: {paths_to_add} removed, {paths_to_del} added")
             return output
 
         return wrapper

@@ -11,7 +11,7 @@ from common import STYLE
 original_sys_path = sys.path.copy()
 
 
-async def initialize_with_module(modules: str | list[str]):
+async def initialize_with_module(modules: str | list[str], eessi_version: str = None):
     """Initialize the environment using a module load command."""
     if isinstance(modules, str):
         modules = [modules]
@@ -24,10 +24,11 @@ async def initialize_with_module(modules: str | list[str]):
         await module.purge(force=True)
 
         print('Loading required modules from EESSI...')
-        EESSI_VERSION = os.getenv('REQUIRED_EESSI_VERSION', '2023.06')
+        if eessi_version is None:
+            eessi_version = os.getenv('REQUIRED_EESSI_VERSION', '2023.06')
         with open(os.devnull, 'w') as devnull:
             with contextlib.redirect_stdout(devnull):
-                await module.load(f'EESSI/{EESSI_VERSION}')
+                await module.load(f'EESSI/{eessi_version}')
 
         for mod in modules:
             await module.load(mod)
