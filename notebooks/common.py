@@ -21,9 +21,15 @@ AIIDA_PROFILE = 'AITW_aiida'
 
 WOOD_MS_DEFAULTS = {
     'wood_type': 'birch',
-    'config_file': '../example-inputs/example_birch.json',
+    'config_file': '../example-inputs/wood_ms/example_birch.json',
     'output_dir': '../results/wood_ms_results',
     'output_formats': 'png,tiff',
+    'verbose': 1,
+}
+WOOD_MS_DEFAULTS_FILTER = {
+    'config_file': '../example-inputs/wood_ms/fit_porosity.json',
+    'output_dir': '../results/wood_ms_results',
+    'input_file': '../results/wood_ms_results/SaveBirch_0/FinalVolume3D/FinalVolume.nrrd',
     'verbose': 1,
 }
 
