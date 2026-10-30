@@ -27,7 +27,7 @@ async def initialize_with_module(modules: str | list[str], eessi_version: str = 
         if eessi_version is None:
             eessi_version = os.getenv('REQUIRED_EESSI_VERSION', '2023.06')
         with open(os.devnull, 'w') as devnull:
-            with contextlib.redirect_stdout(devnull):
+            # with contextlib.redirect_stdout(devnull):
                 await module.load(f'EESSI/{eessi_version}')
 
         for mod in modules:
@@ -70,6 +70,7 @@ def click_param_to_widget(
         'style': STYLE,
         'required': required,
     }
+    value_type = str
     widget_cls = None
     min_val = None
     max_val = None
@@ -77,19 +78,20 @@ def click_param_to_widget(
         min_val = type_dct.get('min', None)
         max_val = type_dct.get('max', None)
         if min_val is None or max_val is None:
-            widget_cls = wdg.IntText
+            widget_cls = wdg.Text
         else:
-            widget_cls = wdg.IntRangeSlider
+            widget_cls = wdg.IntSlider
             widget_kwargs.update({
                 'min': min_val,
                 'max': max_val,
                 'step': 1,
             })
     elif type_str.startswith('Float'):
-        widget_cls = wdg.FloatText
+        widget_cls = wdg.Text
     elif type_str.startswith('String'):
         widget_cls = wdg.Text
     elif type_str.startswith('Bool'):
+        value_type = bool
         widget_cls = wdg.Checkbox
     elif type_str.startswith('Choice'):
         widget_cls = wdg.Select
@@ -115,14 +117,19 @@ def click_param_to_widget(
             'options': codes_str,
         })
         default_value = value
+    elif type_str == 'DelimitedList':
+        widget_cls = wdg.Text
     else:
         raise ValueError(f"Unsupported parameter type: {type_str}")
 
-    if min_val is not None:
-        default_value = default_value if default_value is not None else min_val
-    elif max_val is not None:
-        default_value = default_value if default_value is not None else max_val
-    widget_kwargs['value'] = default_value
+    # if min_val is not None:
+    #     default_value = default_value if default_value is not None else min_val
+    # elif max_val is not None:
+    #     default_value = default_value if default_value is not None else max_val
+    if default_value is not None:
+        widget_kwargs['value'] = value_type(default_value)
+    else:
+        widget_kwargs['placeholder'] = 'No default value'
 
     tooltip_wdg = wdg.Button(
         description='?',
@@ -132,7 +139,23 @@ def click_param_to_widget(
     )
     tooltip_wdg.layout.width = '30px'
 
-    new_widget = widget_cls(**widget_kwargs)
+    # print("-" * 80)
+    # print(f"Creating widget for parameter '{name}':")
+    # print(f"  Widget class: {widget_cls}")
+    # print(f"  Widget kwargs: {widget_kwargs}")
+    # print(f"  Parameter info: {param_info}")
+
+    try:
+        new_widget = widget_cls(**widget_kwargs)
+    except Exception as e:
+        print(f"Error creating widget for parameter '{name}':")
+        print(f"  Widget class: {widget_cls}")
+        print(f"  Widget kwargs: {widget_kwargs}")
+        print(f"  Parameter info: {param_info}")
+        print(f"  type_dct: {type_dct}")
+        print(f"  Exception: {e}")
+        raise
+
     new_widget.layout.width = layout_width
 
     res = wdg.HBox([new_widget, tooltip_wdg])
@@ -142,8 +165,9 @@ def click_param_to_widget(
 
 def get_widgets_from_click_function(
         function: callable, layout_width: str = '2000px',
+        default_panel_name: str = None,
         **kwargs
-    ) -> dict:
+    ) -> tuple[dict, wdg.VBox]:
     """
     Generate ipywidgets for the parameters of a given function.
 
@@ -151,16 +175,49 @@ def get_widgets_from_click_function(
     function (callable): The function to generate widgets for.
 
     Returns:
-    dict: A dictionary mapping parameter names to their corresponding widgets.
+    tuple[dict, wdg.VBox]: A tuple containing 
+        - a dictionary mapping parameter names to their corresponding widgets and 
+        - a VBox containing the widgets to be rendered with collapsible .
     """
-    params_infos = [p.to_info_dict() for p in function.params]
+    # from pprint import pprint
+    # print("^" * 80)
+    # print(f"Generating widgets for function: {function}")
+    # print(f"{type(function) = }")
+    # print(f"{type(function.params[0]) = }")
+    # print(f"{function.params[0].__dict__ = }")
     widgets = {}
 
-    for info in params_infos:
+    panel_widgets = {}
+
+    for param in function.params:
+        info = param.to_info_dict()
+        panel_name = getattr(param, 'panel', None)
+        ptr = panel_widgets.setdefault(panel_name, [])
+        # print(f"Processing parameter: {info['name']}, panel_name: {panel_name}")
         param_name = info['name']
         widget = click_param_to_widget(info, **kwargs)
         widgets[param_name] = widget
-    return widgets
+        ptr.append(widget)
+
+    # Sort the panel names, placing None at the start of the list
+    # sorted_panel_names = sorted(
+    #     panel_widgets.keys(),
+    #     key=lambda x: (x != default_panel_name, x)
+    # )
+
+    default_widgets = panel_widgets.pop(default_panel_name, [])
+    default_vbox = wdg.VBox(default_widgets)
+
+    panel_accordions = []
+    for panel_name in panel_widgets.keys():
+        panel_widgets_list = panel_widgets[panel_name]
+        panel_vbox = wdg.VBox(panel_widgets_list)
+        accordion = wdg.Accordion(children=[panel_vbox], titles=[panel_name])
+        panel_accordions.append(accordion)
+
+    main_vbox = wdg.VBox([default_vbox] + panel_accordions)
+
+    return widgets, main_vbox
 
 def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
     """
@@ -180,11 +237,23 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
         type_dct = info['type']
         type_str = type_dct['param_type']
         name = info['name']
+        default_value = info.get('default', None)
         widget = widgets[name]
         value = widget.children[0].value
+        # print(f"Parameter '{name}': type={type_str}, value={value}, default={default_value}")
         value_str = str(value)
         opt = info['opts'][0]
         opt_sec = (info.get('secondary_opts', []) + [None])[0]
+
+        if value == '' and default_value is None:
+            # print(f"Skipping parameter '{name}' because it has no value and no default.")
+            continue  # Skip empty values with no default
+        if (value is True or value is False) and value == default_value:
+            # print(f"Skipping parameter '{name}' because it is a boolean and matches the default value.")
+            continue  # Skip boolean values that match the default
+        if value == default_value:
+            # print(f"Skipping parameter '{name}' because it matches the default value.")
+            continue  # Skip values that match the default
 
         if info['param_type_name'] == 'argument':
             args.append(value_str)
@@ -198,6 +267,7 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
             if not info.get('count', False):
                 args.append(value_str)
 
+    print(f"Generated command-line arguments from widgets: {args}")
     return args
 
 def widget_button_running(
