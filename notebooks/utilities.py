@@ -74,6 +74,7 @@ def click_param_to_widget(
     widget_cls = None
     min_val = None
     max_val = None
+    observe = False
     if type_str.startswith('Int'):
         min_val = type_dct.get('min', None)
         max_val = type_dct.get('max', None)
@@ -86,6 +87,7 @@ def click_param_to_widget(
                 'max': max_val,
                 'step': 1,
             })
+            observe = True
     elif type_str.startswith('Float'):
         widget_cls = wdg.Text
     elif type_str.startswith('String'):
@@ -156,6 +158,12 @@ def click_param_to_widget(
         print(f"  Exception: {e}")
         raise
 
+    if observe:
+        new_widget.modified = False
+        def on_value_change(change):
+            new_widget.modified = True
+        new_widget.observe(on_value_change, names='value')
+
     new_widget.layout.width = layout_width
 
     res = wdg.HBox([new_widget, tooltip_wdg])
@@ -166,6 +174,7 @@ def click_param_to_widget(
 def get_widgets_from_click_function(
         function: callable, layout_width: str = '2000px',
         default_panel_name: str = None,
+        hide_params: list[str] = None,
         **kwargs
     ) -> tuple[dict, wdg.VBox]:
     """
@@ -179,6 +188,7 @@ def get_widgets_from_click_function(
         - a dictionary mapping parameter names to their corresponding widgets and 
         - a VBox containing the widgets to be rendered with collapsible .
     """
+    hide_params = hide_params or []
     # from pprint import pprint
     # print("^" * 80)
     # print(f"Generating widgets for function: {function}")
@@ -190,7 +200,11 @@ def get_widgets_from_click_function(
     panel_widgets = {}
 
     for param in function.params:
+
         info = param.to_info_dict()
+        param_name = info['name']
+        if param_name in hide_params:
+            continue  # Skip hidden parameters
         panel_name = getattr(param, 'panel', None)
         ptr = panel_widgets.setdefault(panel_name, [])
         # print(f"Processing parameter: {info['name']}, panel_name: {panel_name}")
@@ -205,7 +219,8 @@ def get_widgets_from_click_function(
     #     key=lambda x: (x != default_panel_name, x)
     # )
 
-    default_widgets = panel_widgets.pop(default_panel_name, [])
+    default_widgets = panel_widgets.pop(None, [])
+    default_widgets += panel_widgets.pop(default_panel_name, [])
     default_vbox = wdg.VBox(default_widgets)
 
     panel_accordions = []
@@ -238,8 +253,12 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
         type_str = type_dct['param_type']
         name = info['name']
         default_value = info.get('default', None)
-        widget = widgets[name]
-        value = widget.children[0].value
+        widget_box = widgets.get(name, None)
+        if widget_box is None:
+            continue  # Skip parameters that don't have a corresponding widget
+        # widget = widgets[name]
+        widget = widget_box.children[0]  # Assuming the first child is the actual input widget
+        value = widget.value
         # print(f"Parameter '{name}': type={type_str}, value={value}, default={default_value}")
         value_str = str(value)
         opt = info['opts'][0]
@@ -254,6 +273,9 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
         if value == default_value:
             # print(f"Skipping parameter '{name}' because it matches the default value.")
             continue  # Skip values that match the default
+        if getattr(widget, 'modified', True) is False:
+            print(f"Skipping parameter '{name}' because it has not been modified.")
+            continue  # Skip unmodified widgets
 
         if info['param_type_name'] == 'argument':
             args.append(value_str)
