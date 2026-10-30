@@ -1,0 +1,25 @@
+{
+    "threshold": 127,
+    "solid_is_high": true,
+    "down": 2,
+
+    "smooth_low_iters": 0,
+    "smooth_sigma": 0.6,
+
+    "thicken": 0,
+
+    "final_smooth_iters": 0,
+    "final_smooth_sigma": 0.0,
+
+    "upsample_intermediate": null,
+    "upsample_final": null,
+
+    "pad": 0,
+    "pad_xy_only": false,
+
+    "porosity": null,
+    "sdf_sigma": 0.5,
+    "adjust_porosity_post": false,
+
+    "majority_filter": 1
+}
