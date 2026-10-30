@@ -21,7 +21,7 @@ AIIDA_PROFILE = 'AITW_aiida'
 
 WOOD_MS_DEFAULTS = {
     'wood_type': 'birch',
-    'json_file': '../example-inputs/example_birch.json',
+    'config_file': '../example-inputs/example_birch.json',
     'output_dir': '../results/wood_ms_results',
     'output_formats': 'png,tiff',
     'verbose': 1,
