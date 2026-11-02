@@ -7,6 +7,18 @@
   catalog: AITW
   icon: ./images/AITW_logo.svg
 
+- title: Darcy Infiltration
+  description: Jupyter Notebook interface to the `aitw-darcy` command for computing the saturation time of an 
+    infiltration process in a wood microstructure.
+  source: /voila/render/notebooks/DarcyInfiltration.ipynb
+  type: url
+  icon: ./images/AITW_logo.svg
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
+  catalog: AITW
+
 - title: Molecular Viscosity
   description: |
     Jupyter Notebook interface to the `aitw-viscosity` commands for computing molecular viscosities starting from a

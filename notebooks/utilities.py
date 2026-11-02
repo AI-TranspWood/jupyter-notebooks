@@ -31,7 +31,7 @@ async def initialize_with_module(modules: str | list[str], eessi_version: str = 
         if eessi_version is None:
             eessi_version = os.getenv('REQUIRED_EESSI_VERSION', '2023.06')
         with open(os.devnull, 'w') as devnull:
-            # with contextlib.redirect_stdout(devnull):
+            with contextlib.redirect_stdout(devnull):
                 await module.load(f'EESSI/{eessi_version}')
 
         for mod in modules:
@@ -217,12 +217,6 @@ def get_widgets_from_click_function(
         widgets[param_name] = widget
         ptr.append(widget)
 
-    # Sort the panel names, placing None at the start of the list
-    # sorted_panel_names = sorted(
-    #     panel_widgets.keys(),
-    #     key=lambda x: (x != default_panel_name, x)
-    # )
-
     default_widgets = panel_widgets.pop(None, [])
     default_widgets += panel_widgets.pop(default_panel_name, [])
     default_vbox = wdg.VBox(default_widgets)
@@ -361,7 +355,7 @@ def click_cli_widget(
 
     title = title or click_function.__name__.replace('_', ' ').title()
 
-    title = wdg.HTML(value=f"<hr style=\"margin: 10px 0;\"> <h2>{title}</h2>")
+    title = wdg.HTML(value=f"<hr style=\"height: 5px; background-color: #fcc;\"> <h2>{title}</h2>")
 
     description = wdg.HTML(f"<div style=\"white-space: pre-wrap;\">{click_function.__doc__}</div>")
 

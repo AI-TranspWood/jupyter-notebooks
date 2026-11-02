@@ -19,6 +19,11 @@ if EESSI_VERSION:
 STYLE = {'description_width': '150px', 'width': '600px'}
 AIIDA_PROFILE = 'AITW_aiida'
 
+DARCY_DEFAULTS = {
+    'config_file': '../example-inputs/darcy/small.json',
+    'output_dir': '../results/darcy_results',
+}
+
 WOOD_MS_DEFAULTS = {
     'wood_type': 'birch',
     'config_file': '../example-inputs/wood_ms/example_birch.json',
