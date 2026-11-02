@@ -43,10 +43,16 @@ WOOD_MS_DEFAULTS_TRAIN = {
 }
 
 STIFFNESS_DEFAULTS = {
-    'input_file': '../example-inputs/SurrogateStiffness.json',
+    'input_file': '../example-inputs/surrogate_stiff/SurrogateStiffness.json',
     'output_file': '../results/stiffness_results.json',
     'lower_bound_percentage': 0.05,
     'upper_bound_percentage': 0.95,
+}
+STIFFNESS_OPTIMIZATION_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_stiff/matching-material.json',
+    'output_spec_file': '../example-inputs/surrogate_stiff/matching-outputs.json',
+    'result_file': '../results/stiffness_results.json',
+    'mode':'matching',
 }
 
 VISCOSITY_WORKCHAIN_DEFAULTS = {
