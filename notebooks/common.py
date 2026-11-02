@@ -37,6 +37,10 @@ WOOD_MS_DEFAULTS_FILTER = {
     'input_file': '../results/wood_ms_results/SaveBirch_0/FinalVolume3D/FinalVolume.nrrd',
     'verbose': 1,
 }
+WOOD_MS_DEFAULTS_TRAIN = {
+    'output_dir': '../results/wood_ms_results',
+    'verbose': 1,
+}
 
 STIFFNESS_DEFAULTS = {
     'input_file': '../example-inputs/SurrogateStiffness.json',
