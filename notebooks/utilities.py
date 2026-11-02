@@ -1,12 +1,16 @@
 import asyncio
 import contextlib
+import html
 import importlib
 import os
 import sys
+import traceback
 from functools import wraps
 
 import ipywidgets as wdg
+import rich
 from common import STYLE
+from IPython.display import display
 
 original_sys_path = sys.path.copy()
 
@@ -331,3 +335,67 @@ def widget_button_running(
             return res
         return wrapper
     return decorator
+
+def click_cli_widget(
+        click_function,
+        title: str = None,
+        button_description: str = "Run",
+        button_running_text: str = "Running...",
+        **kwargs
+        ) -> tuple[wdg.Widget, wdg.IntText]:
+    """Create a widget from a click function, exposing all its parameters as ipywidgets.
+    The widget will have a button to execute the function with the current parameter values.
+    """
+    console = rich.get_console()
+    console.is_jupyter = True
+    console.width = 140
+
+    button_event_observer: wdg.IntText = wdg.IntText(
+        value=0, description='', disabled=True,
+    )
+
+    widgets_dct, main_vbox = get_widgets_from_click_function(
+        click_function,
+        **kwargs
+    )
+
+    title = title or click_function.__name__.replace('_', ' ').title()
+
+    title = wdg.HTML(value=f"<hr style=\"margin: 10px 0;\"> <h2>{title}</h2>")
+
+    description = wdg.HTML(f"<div style=\"white-space: pre-wrap;\">{click_function.__doc__}</div>")
+
+    generate_button = wdg.Button(description=button_description, button_style="success")
+
+    output_area = wdg.Output()
+    trace_widget = wdg.HTML()
+    error_accordion = wdg.Accordion(children=[trace_widget])
+    error_accordion.set_title(0, "Exception traceback")
+    error_accordion.selected_index = None
+    error_accordion.layout.display = "none"
+
+    @widget_button_running(running_text=button_running_text)
+    def on_run_button_clicked(b):
+        error_accordion.layout.display = "none"
+        with output_area:
+            output_area.clear_output()
+            args = get_click_args_from_widgets(click_function, widgets_dct)
+            try:
+                click_function(args, standalone_mode=False)
+            except Exception as e:
+                # Enclose stack trace in an accordion for better visibility and only print the error message in the output area
+                error_accordion.layout.display = "block"
+                trace_widget.value = (
+                    "<pre style='white-space: pre-wrap'>"
+                    f"{html.escape(traceback.format_exc())}"
+                    "</pre>"
+                )
+                display(error_accordion)
+                print(f"EXCEPTION: {e}")
+        button_event_observer.value += 1
+
+    generate_button.on_click(on_run_button_clicked)
+
+    widget = wdg.VBox([title, description, main_vbox, generate_button, output_area])
+
+    return widget, button_event_observer
