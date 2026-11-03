@@ -68,6 +68,18 @@
       createNewWindow: false
   catalog: AITW
 
+- title: Wood Stiffness Homogenization
+  description: Jupyter Notebook interface to the `aitw-wood-stiffness-homogenization` command for computing multiscale 
+    stiffness of native, polymer-infiltrated, and delignified + infiltrated wood
+  source: /voila/render/notebooks/WoodStiffHomog.ipynb
+  type: url
+  icon: ./images/AITW_logo.svg
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
+  catalog: AITW
+
 ######################################################################
 # AiiDA
 - title: AiiDA Explorer

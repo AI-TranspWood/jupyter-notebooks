@@ -11,6 +11,10 @@ import ipywidgets as wdg
 from common import STYLE
 from IPython.display import display
 
+BASEDIR = os.path.dirname(os.path.abspath(__file__))
+if BASEDIR not in sys.path:
+    sys.path.insert(0, BASEDIR)
+
 original_sys_path = sys.path.copy()
 
 
@@ -332,8 +336,11 @@ def widget_button_running(
 def click_cli_widget(
         click_function,
         title: str = None,
+        description_text: str = None,
         button_description: str = "Run",
         button_running_text: str = "Running...",
+        output_file_param: str = None,
+        output_dir_pararm: str = None,
         **kwargs
         ) -> tuple[wdg.Widget, wdg.IntText]:
     """Create a widget from a click function, exposing all its parameters as ipywidgets.
@@ -357,7 +364,8 @@ def click_cli_widget(
 
     title = wdg.HTML(value=f"<hr style=\"height: 5px; background-color: #fcc;\"> <h2>{title}</h2>")
 
-    description = wdg.HTML(f"<div style=\"white-space: pre-wrap;\">{click_function.__doc__}</div>")
+    description_text = description_text or click_function.__doc__ or ""
+    description = wdg.HTML(f"<div style=\"white-space: pre-wrap;\">{description_text}</div>")
 
     generate_button = wdg.Button(description=button_description, button_style="success")
 
@@ -370,6 +378,12 @@ def click_cli_widget(
 
     @widget_button_running(running_text=button_running_text)
     def on_run_button_clicked(b):
+        if output_dir_pararm is not None:
+            path = widgets_dct.get(output_dir_pararm).children[0].value
+            os.makedirs(path, exist_ok=True)
+        if output_file_param is not None:
+            path = widgets_dct.get(output_file_param).children[0].value
+            os.makedirs(os.path.dirname(path), exist_ok=True)
         error_accordion.layout.display = "none"
         with output_area:
             output_area.clear_output()

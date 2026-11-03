@@ -55,6 +55,11 @@ STIFFNESS_OPTIMIZATION_DEFAULTS = {
     'mode':'matching',
 }
 
+WOOD_SITFFNESS_HOMOG_DEFAULTS = {
+    'config_file': '../example-inputs/stiff_homog/birch_batch.json',
+    'output': '../results/stiff_homog/birch_batch.csv',
+}
+
 VISCOSITY_WORKCHAIN_DEFAULTS = {
     'num_steps': 500,
     'smiles_string': 'CC(=C)C(=O)OC1C[C@H]2CC[C@]1(C)C2(C)C',
