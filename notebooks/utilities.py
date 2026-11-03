@@ -8,7 +8,6 @@ import traceback
 from functools import wraps
 
 import ipywidgets as wdg
-import rich
 from common import STYLE
 from IPython.display import display
 
@@ -340,6 +339,7 @@ def click_cli_widget(
     """Create a widget from a click function, exposing all its parameters as ipywidgets.
     The widget will have a button to execute the function with the current parameter values.
     """
+    import rich
     console = rich.get_console()
     console.is_jupyter = True
     console.width = 140

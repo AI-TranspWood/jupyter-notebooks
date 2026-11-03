@@ -7,6 +7,18 @@
   catalog: AITW
   icon: ./images/AITW_logo.svg
 
+- title: Clearwood Stiffness
+  description: Jupyter Notebook interface to the `Clearwood_stiffness_model` Julia package that contains a neural
+    network model for clearwood unit cell analysis.
+  source: /voila/render/notebooks/ClearwoodStiffness.ipynb
+  type: url
+  icon: ./images/AITW_logo.svg
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
+  catalog: AITW
+
 - title: Darcy Infiltration
   description: Jupyter Notebook interface to the `aitw-darcy` command for computing the saturation time of an 
     infiltration process in a wood microstructure.
