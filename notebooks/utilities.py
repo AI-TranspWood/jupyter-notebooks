@@ -2,7 +2,9 @@ import asyncio
 import contextlib
 import html
 import importlib
+import json
 import os
+import re
 import sys
 import traceback
 from functools import wraps
@@ -266,7 +268,7 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
         opt_sec = (info.get('secondary_opts', []) + [None])[0]
 
         if value == '' and default_value is None:
-            print(f"Skipping parameter '{name}' because it has no value and no default.")
+            # print(f"Skipping parameter '{name}' because it has no value and no default.")
             continue  # Skip empty values with no default
         # else:
         #     print(f"Parameter '{name}': type={type_str}, value={value} ({type(value)}), default={default_value} ({type(default_value)}), opt={opt}, opt_sec={opt_sec}")
@@ -344,7 +346,7 @@ def click_cli_widget(
         button_description: str = "Run",
         button_running_text: str = "Running...",
         output_file_param: str = None,
-        output_dir_pararm: str = None,
+        output_dir_param: str = None,
         **kwargs
         ) -> tuple[wdg.Widget, wdg.IntText]:
     """Create a widget from a click function, exposing all its parameters as ipywidgets.
@@ -382,8 +384,8 @@ def click_cli_widget(
 
     @widget_button_running(running_text=button_running_text)
     def on_run_button_clicked(b):
-        if output_dir_pararm is not None:
-            path = widgets_dct.get(output_dir_pararm).children[0].value
+        if output_dir_param is not None:
+            path = widgets_dct.get(output_dir_param).children[0].value
             os.makedirs(path, exist_ok=True)
         if output_file_param is not None:
             path = widgets_dct.get(output_file_param).children[0].value
@@ -412,3 +414,135 @@ def click_cli_widget(
     widget = wdg.VBox([title, description, main_vbox, generate_button, output_area])
 
     return widget, button_event_observer
+
+def json_read(file_path: str) -> dict:
+    """Read a JSON file and return its contents as a dictionary."""
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return data
+
+def csv_read(file_path: str):
+    """Read a CSV file and return its contents as a pandas DataFrame."""
+    import pandas as pd
+    data = pd.read_csv(file_path)
+    return data
+
+FMT_READ_FUNC_MAP = {
+    'json': json_read,
+    'csv': csv_read,
+}
+
+FMT_DISPLAY_FUNC_MAP = {
+    'json': lambda data: print(json.dumps(data, indent=4)),
+    'csv': lambda data: display(data),
+}
+
+def find_files(base_path: str, file_format: str) -> list[str]:
+    """Find files with a given format in a base path.
+
+    Args:
+        base_path (str): The base directory to search for files.
+        file_format (str): The file format to search for (e.g., 'json', 'csv').
+
+    Returns:
+        list[str]: A list of file paths matching the specified format.
+    """
+    rgx_output = re.compile(rf'(\S+)\.{file_format}$')
+    outputs = []
+    if not os.path.exists(base_path):
+        return outputs
+    for path in os.listdir(base_path):
+        if not os.path.isfile(os.path.join(base_path, path)):
+            continue
+        match = rgx_output.match(path)
+        if not match:
+            continue
+        label, = match.groups()
+        outputs.append((label, os.path.join(base_path, path)))
+
+    return outputs
+
+def output_visualizer_widget(
+        title: str,
+        event_observer: wdg.IntText,
+        output_dir: str,
+        file_format: str = None,
+        outputs_func = None,
+        read_func = None,
+        data_display_func = None,
+        selector_label_func = None,
+    ) -> wdg.VBox:
+    """Create a widget to display the output file after the click function is executed.
+
+    Args:
+        title (str): The title of the widget.
+        event_observer (wdg.IntText): The IntText widget that observes the button click event.
+        output_dir (str): The directory where the output files are stored.
+        file_format (str): The format of the output file ('json', 'csv', etc.). If provided it implies the output entities are files with the given format. If not provided, the outputs_func must be provided to find the output entities.
+        outputs_func (callable, optional): A function to find the output files. If not provided, it will use the default function based on the file format.
+        read_func (callable, optional): A function to read the output from a given entity. If not provided, it will use the default function based on the file format.
+        data_display_func (callable, optional): A function to display the data.
+        selector_label_func (callable, optional): A function to generate the label for each output in the selector.
+    """
+    title_widget = wdg.HTML(value=f"<h2>{title}</h2>")
+
+    if read_func is None:
+        read_func = FMT_READ_FUNC_MAP.get(file_format, None)
+    if read_func is None:
+        raise ValueError(f"Unsupported file format: {file_format}. Supported formats are: {list(FMT_READ_FUNC_MAP.keys())}")
+
+    if data_display_func is None:
+        data_display_func = FMT_DISPLAY_FUNC_MAP.get(file_format, None)
+    if data_display_func is None:
+        raise ValueError(f"Unsupported file format: {file_format}. Supported formats are: {list(FMT_DISPLAY_FUNC_MAP.keys())}")
+
+    if outputs_func is None:
+        if file_format:
+            outputs_func = lambda: find_files(output_dir, file_format)
+    if outputs_func is None:
+        raise ValueError("Either 'outputs_func' or 'file_format' must be provided.")
+
+    # Start with a choice widget to select which output to visualize
+    output_selector = wdg.Dropdown(
+        options=[],
+        description='Select Output:',
+        disabled=False,
+        style={'description_width': '150px'},
+    )
+    output_selector.layout.width = '500px'
+
+    def update_output_options(*args):
+        """Update the options of the output selector based on the available outputs in the results folder."""
+        outputs = find_files(output_dir, file_format)
+        options = []
+        for label, path in sorted(outputs):
+            data = read_func(path)
+            if selector_label_func:
+                label = selector_label_func(label, data)
+            else:
+                label = f"{label}"
+            options.append((label, path))
+        output_selector.options = options
+        if output_selector.value is None:
+            output_selector.value = options[0][1] if options else None
+
+    # Observe changes in the common event to update the output options whenever a new microstructure is generated
+    event_observer.observe(update_output_options, names='value')
+
+    output_area = wdg.Output()
+
+    def display_selected_output(*args):
+        """Display the selected output based on the selected output, toggle state, and slider value."""
+        selected_output = output_selector.value
+        if not selected_output:
+            return
+        with output_area:
+            output_area.clear_output(wait=True)
+            data = read_func(selected_output)
+            data_display_func(data)
+
+    output_selector.observe(display_selected_output, names='value')
+
+    update_output_options()
+
+    return wdg.VBox([title_widget, output_selector, output_area])

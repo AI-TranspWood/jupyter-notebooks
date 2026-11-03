@@ -19,54 +19,62 @@ if EESSI_VERSION:
 STYLE = {'description_width': '150px', 'width': '600px'}
 AIIDA_PROFILE = 'AITW_aiida'
 
+RESULTS_DIR = '../results'
+
+DARCY_OUTDIR = os.path.join(RESULTS_DIR, 'darcy')
 DARCY_DEFAULTS = {
     'config_file': '../example-inputs/darcy/small.json',
-    'output_dir': '../results/darcy_results',
+    'output_dir': DARCY_OUTDIR,
 }
 
+INFILTRATION_SURROGATE_OUTDIR = os.path.join(RESULTS_DIR, 'infiltration_surrogate')
 INFILTRATION_SURROGATE_TRAIN_DEFAULTS = {
     'data_file': '../example-inputs/infiltration_surrogate/dataset.csv',
-    'output_dir': '../results/infiltration_surrogate/training',
+    'output_dir': os.path.join(INFILTRATION_SURROGATE_OUTDIR, 'train'),
 }
 INFILTRATION_SURROGATE_INFERENCE_DEFAULTS = {
     'input_file': '../example-inputs/infiltration_surrogate/dataset.csv',
-    'output_file': '../results/infiltration_surrogate/inference_results.csv',
+    'output_file': os.path.join(INFILTRATION_SURROGATE_OUTDIR, 'inference_results.csv'),
 }
 
+WOOD_MS_OUTDIR = os.path.join(RESULTS_DIR, 'wood_ms')
 WOOD_MS_DEFAULTS = {
     'wood_type': 'birch',
     'config_file': '../example-inputs/wood_ms/example_birch.json',
-    'output_dir': '../results/wood_ms_results',
+    'output_dir': WOOD_MS_OUTDIR,
     'output_formats': 'png,tiff',
     'verbose': 1,
 }
 WOOD_MS_DEFAULTS_FILTER = {
     'config_file': '../example-inputs/wood_ms/fit_porosity.json',
-    'output_dir': '../results/wood_ms_results',
-    'input_file': '../results/wood_ms_results/SaveBirch_0/FinalVolume3D/FinalVolume.nrrd',
+    'output_dir': WOOD_MS_OUTDIR,
+    'input_file': os.path.join(WOOD_MS_OUTDIR, 'SaveBirch_0/FinalVolume3D/FinalVolume.nrrd'),
     'verbose': 1,
 }
 WOOD_MS_DEFAULTS_TRAIN = {
-    'output_dir': '../results/wood_ms_results',
+    'output_dir': WOOD_MS_OUTDIR,
     'verbose': 1,
 }
 
+STIFFNESS_OUTDIR = os.path.join(RESULTS_DIR, 'stiffness_surrogate')
 STIFFNESS_DEFAULTS = {
     'input_file': '../example-inputs/surrogate_stiff/SurrogateStiffness.json',
-    'output_file': '../results/stiffness_results.json',
+    'output_file': os.path.join(STIFFNESS_OUTDIR, 'stiffness_results.json'),
     'lower_bound_percentage': 0.05,
     'upper_bound_percentage': 0.95,
 }
+STIFFNESS_OPTIM_OUTDIR = os.path.join(RESULTS_DIR, 'stiffness_optimization')
 STIFFNESS_OPTIMIZATION_DEFAULTS = {
     'input_file': '../example-inputs/surrogate_stiff/matching-material.json',
     'output_spec_file': '../example-inputs/surrogate_stiff/matching-outputs.json',
-    'result_file': '../results/stiffness_results.json',
+    'result_file': os.path.join(STIFFNESS_OPTIM_OUTDIR, 'stiffness_results.json'),
     'mode':'matching',
 }
 
+HOMOG_STIFFNESS_OUTDIR = os.path.join(RESULTS_DIR, 'stiff_homog')
 WOOD_SITFFNESS_HOMOG_DEFAULTS = {
     'config_file': '../example-inputs/stiff_homog/birch_batch.json',
-    'output': '../results/stiff_homog/birch_batch.csv',
+    'output': os.path.join(HOMOG_STIFFNESS_OUTDIR, 'birch_batch.csv'),
 }
 
 VISCOSITY_WORKCHAIN_DEFAULTS = {
