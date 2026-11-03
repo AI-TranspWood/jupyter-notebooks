@@ -266,16 +266,20 @@ def get_click_args_from_widgets(function: callable, widgets: dict) -> list:
         opt_sec = (info.get('secondary_opts', []) + [None])[0]
 
         if value == '' and default_value is None:
-            # print(f"Skipping parameter '{name}' because it has no value and no default.")
+            print(f"Skipping parameter '{name}' because it has no value and no default.")
             continue  # Skip empty values with no default
+        # else:
+        #     print(f"Parameter '{name}': type={type_str}, value={value} ({type(value)}), default={default_value} ({type(default_value)}), opt={opt}, opt_sec={opt_sec}")
         if (value is True or value is False) and value == default_value:
             # print(f"Skipping parameter '{name}' because it is a boolean and matches the default value.")
             continue  # Skip boolean values that match the default
-        if value == default_value:
+        if value_str == str(default_value):
             # print(f"Skipping parameter '{name}' because it matches the default value.")
             continue  # Skip values that match the default
+        # else:
+        #     print(f"Parameter '{name}' will be included in the arguments. value={value} ({type(value)}), default={default_value} ({type(default_value)})")
         if getattr(widget, 'modified', True) is False:
-            print(f"Skipping parameter '{name}' because it has not been modified.")
+            # print(f"Skipping parameter '{name}' because it has not been modified.")
             continue  # Skip unmodified widgets
 
         if info['param_type_name'] == 'argument':
@@ -389,6 +393,7 @@ def click_cli_widget(
             output_area.clear_output()
             args = get_click_args_from_widgets(click_function, widgets_dct)
             try:
+                # pass
                 click_function(args, standalone_mode=False)
             except Exception as e:
                 # Enclose stack trace in an accordion for better visibility and only print the error message in the output area

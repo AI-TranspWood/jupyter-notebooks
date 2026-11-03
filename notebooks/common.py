@@ -24,6 +24,15 @@ DARCY_DEFAULTS = {
     'output_dir': '../results/darcy_results',
 }
 
+INFILTRATION_SURROGATE_TRAIN_DEFAULTS = {
+    'data_file': '../example-inputs/infiltration_surrogate/dataset.csv',
+    'output_dir': '../results/infiltration_surrogate/training',
+}
+INFILTRATION_SURROGATE_INFERENCE_DEFAULTS = {
+    'input_file': '../example-inputs/infiltration_surrogate/dataset.csv',
+    'output_file': '../results/infiltration_surrogate/inference_results.csv',
+}
+
 WOOD_MS_DEFAULTS = {
     'wood_type': 'birch',
     'config_file': '../example-inputs/wood_ms/example_birch.json',

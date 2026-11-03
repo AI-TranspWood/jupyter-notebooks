@@ -4,7 +4,7 @@
   description: Notebooks description
   source: ./README.md
   type: markdown
-  catalog: AITW
+  catalog: 1. AITW
   icon: ./images/AITW_logo.svg
 
 - title: Clearwood Stiffness
@@ -17,7 +17,7 @@
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
       createNewWindow: false
-  catalog: AITW
+  catalog: 1. AITW
 
 - title: Darcy Infiltration
   description: Jupyter Notebook interface to the `aitw-darcy` command for computing the saturation time of an 
@@ -29,7 +29,7 @@
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
       createNewWindow: false
-  catalog: AITW
+  catalog: 1. AITW
 
 - title: Molecular Viscosity
   description: |
@@ -42,7 +42,20 @@
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
       createNewWindow: false
-  catalog: AITW
+  catalog: 1. AITW
+
+- title: Permeability Workchain
+  description: |
+    Jupyter Notebook interface to the `aitw-permeability` commands for computing the wood permeability using a
+      Lattice-Boltzmann method (LBM) implemented as an AiiDA workchain.
+  source: /voila/render/notebooks/PermeabilityWorkchain.ipynb
+  type: url
+  icon: ./images/AITW_logo.svg
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
+  catalog: 1. AITW
 
 - title: Surrogate Stiffness
   description: Jupyter Notebook interface to the `aitw-stiffness` command for computing the stiffness of wood fibers
@@ -54,7 +67,7 @@
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
       createNewWindow: false
-  catalog: AITW
+  catalog: 1. AITW
 
 - title: Wood Microstructures
   description: Jupyter Notebook interface to the `wood_ms` command for generating wood microstructures both with and
@@ -66,7 +79,7 @@
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
       createNewWindow: false
-  catalog: AITW
+  catalog: 1. AITW
 
 - title: Wood Stiffness Homogenization
   description: Jupyter Notebook interface to the `aitw-wood-stiffness-homogenization` command for computing multiscale 
@@ -78,7 +91,7 @@
       sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
       referrerPolicy: ['no-referrer']
       createNewWindow: false
-  catalog: AITW
+  catalog: 1. AITW
 
 ######################################################################
 # AiiDA
@@ -86,11 +99,12 @@
   description: Launch AiiDA REST Api + an AiiDA-explorer instance to interact with it.
   source: http://localhost:$PORT/?api_url=http://127.0.0.1:${FLASK_PORT_EXT}/api/v4
   type: local-server
+  icon: ./images/aiida-icon.svg
   args:
     - ./scripts/launch_aiida_explorer.sh
     - --port
     - $PORT
-  catalog: AiiDA
+  catalog: 2. AiiDA
 
 ######################################################################
 # Manage
@@ -99,9 +113,10 @@
   type: terminal
   source: 'git pull origin main'
   cwd: './'
+  icon: ./images/icons8-update.svg
   args:
     reuse: true
-  catalog: MANAGE
+  catalog: 3. MANAGE
 # - title: Shutdown extension
 #   description: Force a restart of the extension to update the Luancher and re-run the initialization scripts
 #   type: terminal
@@ -109,4 +124,4 @@
 #   cwd: './'
 #   args:
 #     reuse: true
-#   catalog: MANAGE
+#   catalog: 3. MANAGE
