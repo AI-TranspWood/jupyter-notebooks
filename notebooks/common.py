@@ -59,6 +59,40 @@ STIFFNESS_OPTIMIZATION_DEFAULTS = {
     'mode':'matching',
 }
 
+VISCOSITY_SURROGATE_OUTDIR = os.path.join(RESULTS_DIR, 'viscosity_surrogate')
+VISCOSITY_SURROGATE_M1_INF_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_file': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm1', 'inference_results.csv'),
+}
+VISCOSITY_SURROGATE_M1_TRAIN_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_dir': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm1', 'train'),
+}
+VISCOSITY_SURROGATE_M2_INF_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_file': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm2', 'inference_results.csv'),
+}
+VISCOSITY_SURROGATE_M2_TRAIN_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_dir': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm2', 'train'),
+}
+VISCOSITY_SURROGATE_M3_INF_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_file': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm3', 'inference_results.csv'),
+}
+VISCOSITY_SURROGATE_M3_TRAIN_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_dir': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm3', 'train'),
+}
+VISCOSITY_SURROGATE_M4_INF_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_file': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm4', 'inference_results.csv'),
+}
+VISCOSITY_SURROGATE_M4_TRAIN_DEFAULTS = {
+    'input_file': '../example-inputs/surrogate_visc/dataset.csv',
+    'output_dir': os.path.join(VISCOSITY_SURROGATE_OUTDIR, 'm4', 'train'),
+}
+
 HOMOG_STIFFNESS_OUTDIR = os.path.join(RESULTS_DIR, 'stiff_homog')
 WOOD_SITFFNESS_HOMOG_DEFAULTS = {
     'config_file': '../example-inputs/stiff_homog/birch_batch.json',

@@ -81,6 +81,18 @@
       createNewWindow: false
   catalog: 1. AITW
 
+- title: Surrogate Viscosity
+  description: Jupyter Notebook interface to the `aitw-viscosity-surrogate` command for computing the viscosity of a
+    compound based on its SMILES representation using molecular descriptors and machine learning models.
+  source: /voila/render/notebooks/SurrogateViscosity.ipynb
+  type: url
+  icon: ./images/AITW_logo.svg
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
+  catalog: 1. AITW
+
 - title: Wood Microstructures
   description: Jupyter Notebook interface to the `wood_ms` command for generating wood microstructures both with and
     without the use of a surrogate model.
