@@ -65,6 +65,7 @@ WOOD_SITFFNESS_HOMOG_DEFAULTS = {
     'output': os.path.join(HOMOG_STIFFNESS_OUTDIR, 'birch_batch.csv'),
 }
 
+VISCOSITY_OUTDIR = os.path.join(RESULTS_DIR, 'viscosity_wc')
 VISCOSITY_WORKCHAIN_DEFAULTS = {
     'num_steps': 500,
     'smiles_string': 'CC(=C)C(=O)OC1C[C@H]2CC[C@]1(C)C2(C)C',
