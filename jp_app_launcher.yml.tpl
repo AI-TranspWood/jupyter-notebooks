@@ -57,6 +57,18 @@
       createNewWindow: false
   catalog: 1. AITW
 
+- title: Surrogate Infiltration
+  description: Jupyter Notebook interface to the `aitw-infiltration-surrogate` command for computing the infiltration
+    process time of a wood microstructure based on a surrogate model.
+  source: /voila/render/notebooks/SurrogateInfiltration.ipynb
+  type: url
+  icon: ./images/AITW_logo.svg
+  args:
+      sandbox: [ 'allow-same-origin', 'allow-scripts', 'allow-downloads', 'allow-modals', 'allow-popups']
+      referrerPolicy: ['no-referrer']
+      createNewWindow: false
+  catalog: 1. AITW
+
 - title: Surrogate Stiffness
   description: Jupyter Notebook interface to the `aitw-stiffness` command for computing the stiffness of wood fibers
     using a TensorFlow Probability based surrogate model

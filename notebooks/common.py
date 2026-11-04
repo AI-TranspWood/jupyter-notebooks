@@ -112,6 +112,19 @@ VISCOSITY_CODES = {
     },
 }
 
+PERMEABILITY_WORKCHAIN_INPUTDIR = '../example-inputs/permeability_workchain'
+PERMEABILITY_WORKCHAIN_DEFAULTS = {
+    'wood_type': 'birch',
+    'generate_params_file': os.path.join(PERMEABILITY_WORKCHAIN_INPUTDIR, 'wood_ms_birch_small.json'),
+    'filter_params_file': os.path.join(PERMEABILITY_WORKCHAIN_INPUTDIR, 'fit_porosity.json'),
+    'resolution': 45,
+}
+
+PERMEABILITY_CODE_MAP = {
+    'wood_ms': 'wood_ms',
+    'permeability_code': 'permeability_olb',
+}
+
 PERMEABILITY_CODES = {
     'wood_ms': {
         'filepath_executable': f'wood_ms',

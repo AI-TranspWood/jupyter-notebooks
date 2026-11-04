@@ -8,6 +8,7 @@ import re
 import sys
 import traceback
 from functools import wraps
+from typing import Callable, TypeVar
 
 import ipywidgets as wdg
 from common import STYLE
@@ -437,7 +438,7 @@ FMT_DISPLAY_FUNC_MAP = {
     'csv': lambda data: display(data),
 }
 
-def find_files(base_path: str, file_format: str) -> list[str]:
+def find_files(base_path: str, file_format: str) -> list[tuple[str, str]]:
     """Find files with a given format in a base path.
 
     Args:
@@ -462,15 +463,19 @@ def find_files(base_path: str, file_format: str) -> list[str]:
 
     return outputs
 
+D = TypeVar('D')
+L = TypeVar('L')
+V = TypeVar('V')
+
 def output_visualizer_widget(
         title: str,
         event_observer: wdg.IntText,
-        output_dir: str,
+        output_dir: str = None,
         file_format: str = None,
-        outputs_func = None,
-        read_func = None,
-        data_display_func = None,
-        selector_label_func = None,
+        outputs_func: Callable[[], list[tuple[L, V]]] = None,
+        read_func: Callable[[V], D] = None,
+        data_display_func: Callable[[D], None] = None,
+        selector_label_func: Callable[[L, V], str] = None,
     ) -> wdg.VBox:
     """Create a widget to display the output file after the click function is executed.
 
@@ -498,6 +503,8 @@ def output_visualizer_widget(
 
     if outputs_func is None:
         if file_format:
+            if output_dir is None:
+                raise ValueError("output_dir must be provided if file_format is specified.")
             outputs_func = lambda: find_files(output_dir, file_format)
     if outputs_func is None:
         raise ValueError("Either 'outputs_func' or 'file_format' must be provided.")
@@ -513,14 +520,14 @@ def output_visualizer_widget(
 
     def update_output_options(*args):
         """Update the options of the output selector based on the available outputs in the results folder."""
-        outputs = find_files(output_dir, file_format)
+        outputs = outputs_func()
         options = []
         for label, path in sorted(outputs):
             data = read_func(path)
             if selector_label_func:
                 label = selector_label_func(label, data)
             else:
-                label = f"{label}"
+                label = str(label)
             options.append((label, path))
         output_selector.options = options
         if output_selector.value is None:

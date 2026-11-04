@@ -47,8 +47,6 @@ def with_aiida_profile(profile_name: str = AIIDA_PROFILE):
     try:
         with profile_context(profile_name, allow_switch=True) as profile:
             yield profile
-    except Exception as e:
-        raise RuntimeError(f"Could not load AiiDA profile '{profile_name}': {e}")
     finally:
         pass
 
