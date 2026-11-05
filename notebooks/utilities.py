@@ -45,6 +45,22 @@ async def initialize_with_module(modules: str | list[str], eessi_version: str = 
 
         importlib.invalidate_caches()
 
+def get_reference_widget(doi: str, citation: str, name: str = "REFERENCE") -> wdg.HTML:
+    """Create an HTML widget for a reference with a DOI link.
+
+    Args:
+        doi (str): The DOI of the reference.
+        citation (str): The citation text.
+
+    Returns:
+        wdg.HTML: An HTML widget containing the reference.
+    """
+    url = f"https://doi.org/{doi}"
+    link_style = "color: #1f77b4; text-decoration: underline; cursor: pointer;"
+    href_common = f"target='_blank' rel='noopener noreferrer' style='{link_style}'"
+    html_content = f"<p><strong>{name}:</strong> <a href='{url}' {href_common}>{citation}</a></p>"
+    return wdg.HTML(value=html_content)
+
 def click_param_to_widget(
         param_info: dict,
         override_defaults: dict = None,
