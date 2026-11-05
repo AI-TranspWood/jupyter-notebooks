@@ -119,15 +119,25 @@
 
 ######################################################################
 # AiiDA
-- title: AiiDA Explorer
-  description: Launch AiiDA REST Api + an AiiDA-explorer instance to interact with it.
-  source: http://localhost:$PORT/?api_url=http://127.0.0.1:${FLASK_PORT_EXT}/api/v4
-  type: local-server
+- title: AiiDA Explorer 2023
+  description: Launch AiiDA REST Api for 2023 TCs - MolecularViscosity.
+  # source: http://localhost:$PORT/?api_url=http://127.0.0.1:${FLASK_PORT_EXT}/api/v4
+  type: terminal
+  source: './scripts/launch_restapi.sh 2023.06'
+  cwd: './'
   icon: ./images/aiida-icon.svg
   args:
-    - ./scripts/launch_aiida_explorer.sh
-    - --port
-    - $PORT
+    reuse: true
+  catalog: 2. AiiDA
+- title: AiiDA Explorer 2025
+  description: Launch AiiDA REST Api for 2025 TCs - Permeability.
+  # source: http://localhost:$PORT/?api_url=http://127.0.0.1:${FLASK_PORT_EXT}/api/v4
+  type: terminal
+  source: './scripts/launch_restapi.sh 2025.06'
+  cwd: './'
+  icon: ./images/aiida-icon.svg
+  args:
+    reuse: true
   catalog: 2. AiiDA
 
 ######################################################################
@@ -135,12 +145,21 @@
 - title: UPDATE
   description: Pull the latest version of the notebooks
   type: terminal
-  source: 'git pull origin main'
+  source: 'git pull origin main && echo "DONE!!!'
   cwd: './'
   icon: ./images/icons8-update.svg
   args:
     reuse: true
   catalog: 3. MANAGE
+# - title: DEVELOP
+#   description: Checkout the develop branch of the notebooks to test new features and updates (could be unstable)
+#   type: terminal
+#   source: 'git checkout develop && git pull origin develop && exit'
+#   cwd: './'
+#   icon: ./images/icons8-update.svg
+#   args:
+#     reuse: true
+#   catalog: 3. MANAGE
 # - title: Shutdown extension
 #   description: Force a restart of the extension to update the Luancher and re-run the initialization scripts
 #   type: terminal
