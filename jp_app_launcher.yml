@@ -119,7 +119,7 @@
 
 ######################################################################
 # AiiDA
-- title: AiiDA Explorer 2023
+- title: AiiDA REST Api 2023
   description: Launch AiiDA REST Api for 2023 TCs - MolecularViscosity.
   # source: http://localhost:$PORT/?api_url=http://127.0.0.1:${FLASK_PORT_EXT}/api/v4
   type: terminal
@@ -129,7 +129,7 @@
   args:
     reuse: true
   catalog: 2. AiiDA
-- title: AiiDA Explorer 2025
+- title: AiiDA REST Api 2025
   description: Launch AiiDA REST Api for 2025 TCs - Permeability.
   # source: http://localhost:$PORT/?api_url=http://127.0.0.1:${FLASK_PORT_EXT}/api/v4
   type: terminal

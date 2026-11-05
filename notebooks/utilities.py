@@ -63,6 +63,7 @@ def get_reference_widget(doi: str, citation: str, name: str = "REFERENCE") -> wd
 
 def click_param_to_widget(
         param_info: dict,
+        custom_names: dict[str, str] = None,
         override_defaults: dict = None,
         code_map: dict = None,
         layout_width: str = '700px',
@@ -79,19 +80,21 @@ def click_param_to_widget(
 
     override_defaults = override_defaults or {}
     code_map = code_map or {}
+    custom_names = custom_names or {}
 
-    name = param_info['name']
+    param_name = param_info['name']
+    name_str = custom_names.get(param_name, param_name)
     default_value = param_info.get('default', None)
     # Apply override if provided
-    default_value = override_defaults.get(name, default_value)
-    help_str = param_info.get('help', name) or name
+    default_value = override_defaults.get(param_name, default_value)
+    help_str = param_info.get('help', name_str) or name_str
     type_dct = param_info['type']
     type_str = type_dct['param_type']
     required = param_info.get('required', False)
 
     widget_kwargs = {
         # 'value': default_value,
-        'description': name,
+        'description': name_str,
         'tooltip': help_str,
         'style': STYLE,
         'required': required,
@@ -136,7 +139,7 @@ def click_param_to_widget(
         codes_str = [f'{code.label}@{code.computer.label}' for code in codes]
         value = None
         for code in codes:
-            expected = code_map.get(name, None)
+            expected = code_map.get(param_name, None)
             # print('Expected code for', name, ':', expected, ' - checking code:', code.label)
             if expected is not None and code.label == expected:
                 value = f'{code.label}@{code.computer.label}'
@@ -176,7 +179,7 @@ def click_param_to_widget(
     try:
         new_widget = widget_cls(**widget_kwargs)
     except Exception as e:
-        print(f"Error creating widget for parameter '{name}':")
+        print(f"Error creating widget for parameter '{param_name}' '{name_str}':")
         print(f"  Widget class: {widget_cls}")
         print(f"  Widget kwargs: {widget_kwargs}")
         print(f"  Parameter info: {param_info}")
@@ -199,8 +202,9 @@ def click_param_to_widget(
 
 def get_widgets_from_click_function(
         function: callable, layout_width: str = '2000px',
-        default_panel_name: str = None,
+        visible_panel_names: str | list[str] = None,
         hide_params: list[str] = None,
+        custom_groupings: dict[str, list[str]] = None,
         **kwargs
     ) -> tuple[dict, wdg.VBox]:
     """
@@ -225,13 +229,29 @@ def get_widgets_from_click_function(
 
     panel_widgets = {}
 
+    custom_groupings = custom_groupings or {}
+    custom_groupings_reverse = {}
+    # custom_groupings_all = set()
+    for panel_name, param_names in custom_groupings.items():
+        # panel_widgets[panel_name] = []
+        # custom_groupings_all.update(param_names)
+        for param_name in param_names:
+            custom_groupings_reverse[param_name] = panel_name
+
+    if isinstance(visible_panel_names, str):
+        visible_panel_names = [visible_panel_names]
+
     for param in function.params:
 
         info = param.to_info_dict()
         param_name = info['name']
         if param_name in hide_params:
             continue  # Skip hidden parameters
-        panel_name = getattr(param, 'panel', None)
+        panel_name = custom_groupings_reverse.get(
+            param_name,
+            getattr(param, 'panel', None)
+        )
+        # panel_name = getattr(param, 'panel', None)
         ptr = panel_widgets.setdefault(panel_name, [])
         # print(f"Processing parameter: {info['name']}, panel_name: {panel_name}")
         param_name = info['name']
@@ -240,7 +260,8 @@ def get_widgets_from_click_function(
         ptr.append(widget)
 
     default_widgets = panel_widgets.pop(None, [])
-    default_widgets += panel_widgets.pop(default_panel_name, [])
+    for panel_name in visible_panel_names or []:
+        default_widgets += panel_widgets.pop(panel_name, [])
     default_vbox = wdg.VBox(default_widgets)
 
     panel_accordions = []
@@ -393,11 +414,22 @@ def click_cli_widget(
     generate_button = wdg.Button(description=button_description, button_style="success")
 
     output_area = wdg.Output()
+    output_accordion = wdg.Accordion(children=[output_area], selected_index=None)
+    output_accordion.set_title(0, "Output Logs")
     trace_widget = wdg.HTML()
     error_accordion = wdg.Accordion(children=[trace_widget])
     error_accordion.set_title(0, "Exception traceback")
     error_accordion.selected_index = None
     error_accordion.layout.display = "none"
+
+    manually_closed_output = False
+    def on_output_accordion_change(change):
+        nonlocal manually_closed_output
+        # Remove color of output area border when the user manually interacts with the output accordion
+        output_accordion.layout.border = ""
+        if change['new'] is None:
+            manually_closed_output = True
+    output_accordion.observe(on_output_accordion_change, names='selected_index')
 
     @widget_button_running(running_text=button_running_text)
     def on_run_button_clicked(b):
@@ -413,6 +445,10 @@ def click_cli_widget(
             args = get_click_args_from_widgets(click_function, widgets_dct)
             try:
                 # pass
+                # Change color of output area to blue to indicate running
+                if not manually_closed_output:
+                    output_accordion.selected_index = 0
+                output_accordion.layout.border = "2px solid blue"
                 click_function(args, standalone_mode=False)
             except Exception as e:
                 # Enclose stack trace in an accordion for better visibility and only print the error message in the output area
@@ -423,12 +459,17 @@ def click_cli_widget(
                     "</pre>"
                 )
                 display(error_accordion)
-                print(f"EXCEPTION: {e}")
+                print(f"ERROR: {e}")
+                # Change border color of output area to red to indicate error
+                output_accordion.layout.border = "2px solid red"
+            else:
+                # Change border color of output area to green to indicate success
+                output_accordion.layout.border = "2px solid green"
         button_event_observer.value += 1
 
     generate_button.on_click(on_run_button_clicked)
 
-    widget = wdg.VBox([title, description, main_vbox, generate_button, output_area])
+    widget = wdg.VBox([title, description, main_vbox, generate_button, output_accordion])
 
     return widget, button_event_observer
 
@@ -490,7 +531,7 @@ def output_visualizer_widget(
         file_format: str = None,
         outputs_func: Callable[[], list[tuple[L, V]]] = None,
         read_func: Callable[[V], D] = None,
-        data_display_func: Callable[[D], None] = None,
+        data_display_func: Callable[[D], wdg.Widget] = None,
         selector_label_func: Callable[[L, V], str] = None,
     ) -> wdg.VBox:
     """Create a widget to display the output file after the click function is executed.
@@ -559,9 +600,9 @@ def output_visualizer_widget(
         selected_output = output_selector.value
         if not selected_output:
             return
+        data = read_func(selected_output)
+        output_area.clear_output(wait=True)
         with output_area:
-            output_area.clear_output(wait=True)
-            data = read_func(selected_output)
             data_display_func(data)
 
     output_selector.observe(display_selected_output, names='value')
