@@ -4,6 +4,7 @@
 FLASK_PORT_FILE="${HOME}/flask_port.env"
 PID_FILE=$HOME/.aiida_restapi.pid
 VERSION_FILE=$HOME/.aiida_restapi_version.env
+DEFAULT_FLASK_PORT=5000
 
 REQ_VERSION=${1:-2023.06}
 if [[ "$REQ_VERSION" == "2023.06" ]]; then
@@ -23,7 +24,11 @@ export AIIDA_PATH=$(realpath $HOME/.aiida_$EBVERSIONAIIDAMINCORE)
 
 
 if [ -f "${FLASK_PORT_FILE}" ]; then
-    FLASK_PORT="$(cat "${FLASK_PORT_FILE}")"
+    FLASK_PORT="$(cat "${FLASK_PORT_FILE}" | tr -d '[:space:]')"
+    if [[ -z "${FLASK_PORT}" ]]; then
+        echo "Warning: ${FLASK_PORT_FILE} is empty. Using default port 5000."
+        FLASK_PORT="${DEFAULT_FLASK_PORT}"
+    fi
 else
     FLASK_PORT="${DEFAULT_FLASK_PORT}"
 fi
