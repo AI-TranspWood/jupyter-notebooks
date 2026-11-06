@@ -1,0 +1,15 @@
+[
+    {
+        "sizeVolume": [70, 70, 30],
+        "extra_size": [25, 25, 15],
+        "random_seed": 5,
+        "saveSlice": "all",
+
+        "save_slices_as_2d": 1,
+        "save_volume_as_3d": 1,
+        "save_local_dist": 1,
+        "save_global_dist": 1,
+
+        "binarize_threshold": 128
+    }
+]
