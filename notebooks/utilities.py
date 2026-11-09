@@ -12,6 +12,7 @@ from typing import Callable, TypeVar
 
 import ipywidgets as wdg
 from common import STYLE
+from IPython.display import Image as IPyImage
 from IPython.display import display
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
@@ -485,14 +486,20 @@ def csv_read(file_path: str):
     data = pd.read_csv(file_path)
     return data
 
+def read_image(file_path: str) -> IPyImage:
+    """Read an image file and return it as an IPython Image object."""
+    return IPyImage(url=file_path)
+
 FMT_READ_FUNC_MAP = {
     'json': json_read,
     'csv': csv_read,
+    'png': read_image,
 }
 
 FMT_DISPLAY_FUNC_MAP = {
     'json': lambda data: print(json.dumps(data, indent=4)),
     'csv': lambda data: display(data),
+    'png': lambda data: display(data),
 }
 
 def find_files(base_path: str, file_format: str) -> list[tuple[str, str]]:
