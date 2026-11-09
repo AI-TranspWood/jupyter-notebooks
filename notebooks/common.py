@@ -32,6 +32,7 @@ WOOD_MS_DEFAULTS = {
     'output_dir': WOOD_MS_OUTDIR,
     'output_formats': 'png,tiff',
     'verbose': 1,
+    'fit_porosity_config': '../example-inputs/wood_ms/fit_porosity.json',
 }
 WOOD_MS_DEFAULTS_FILTER = {
     'config_file': '../example-inputs/wood_ms/fit_porosity.json',

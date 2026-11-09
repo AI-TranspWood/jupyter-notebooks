@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import traceback
+import warnings
 from functools import wraps
 from typing import Callable, TypeVar
 
@@ -20,6 +21,8 @@ if BASEDIR not in sys.path:
     sys.path.insert(0, BASEDIR)
 
 original_sys_path = sys.path.copy()
+
+warnings.filterwarnings("ignore")
 
 
 async def initialize_with_module(modules: str | list[str], eessi_version: str = None):
@@ -538,7 +541,7 @@ def output_visualizer_widget(
         file_format: str = None,
         outputs_func: Callable[[], list[tuple[L, V]]] = None,
         read_func: Callable[[V], D] = None,
-        data_display_func: Callable[[D], wdg.Widget] = None,
+        data_display_func: Callable[[D], None] = None,
         selector_label_func: Callable[[L, V], str] = None,
     ) -> wdg.VBox:
     """Create a widget to display the output file after the click function is executed.
