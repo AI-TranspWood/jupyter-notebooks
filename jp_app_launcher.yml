@@ -70,8 +70,9 @@
   catalog: 1. AITW
 
 - title: Surrogate Stiffness
-  description: Jupyter Notebook interface to the `aitw-stiffness` command for computing the stiffness of wood fibers
-    using a TensorFlow Probability based surrogate model
+  description: Jupyter Notebook interface to the `aitw-stiffness` and `aitw-material-optimization` commands for
+    computing the stiffness of wood fibers using a TensorFlow Probability based surrogate model or use a Bayesian method
+    to optimize the cell wall composition of a wood fiber for a target stiffness.
   source: /voila/render/notebooks/SurrogateStiffness.ipynb
   type: url
   icon: ./images/AITW_logo.svg
