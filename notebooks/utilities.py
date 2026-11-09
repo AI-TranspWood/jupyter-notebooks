@@ -7,11 +7,13 @@ import os
 import re
 import sys
 import traceback
+import warnings
 from functools import wraps
 from typing import Callable, TypeVar
 
 import ipywidgets as wdg
 from common import STYLE
+from IPython.display import Image as IPyImage
 from IPython.display import display
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +21,8 @@ if BASEDIR not in sys.path:
     sys.path.insert(0, BASEDIR)
 
 original_sys_path = sys.path.copy()
+
+warnings.filterwarnings("ignore")
 
 
 async def initialize_with_module(modules: str | list[str], eessi_version: str = None):
@@ -485,14 +489,20 @@ def csv_read(file_path: str):
     data = pd.read_csv(file_path)
     return data
 
+def read_image(file_path: str) -> IPyImage:
+    """Read an image file and return it as an IPython Image object."""
+    return IPyImage(url=file_path)
+
 FMT_READ_FUNC_MAP = {
     'json': json_read,
     'csv': csv_read,
+    'png': read_image,
 }
 
 FMT_DISPLAY_FUNC_MAP = {
     'json': lambda data: print(json.dumps(data, indent=4)),
     'csv': lambda data: display(data),
+    'png': lambda data: display(data),
 }
 
 def find_files(base_path: str, file_format: str) -> list[tuple[str, str]]:
@@ -531,7 +541,7 @@ def output_visualizer_widget(
         file_format: str = None,
         outputs_func: Callable[[], list[tuple[L, V]]] = None,
         read_func: Callable[[V], D] = None,
-        data_display_func: Callable[[D], wdg.Widget] = None,
+        data_display_func: Callable[[D], None] = None,
         selector_label_func: Callable[[L, V], str] = None,
     ) -> wdg.VBox:
     """Create a widget to display the output file after the click function is executed.
