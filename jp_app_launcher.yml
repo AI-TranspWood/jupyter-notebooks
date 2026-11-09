@@ -146,7 +146,7 @@
 - title: UPDATE
   description: Pull the latest version of the notebooks
   type: terminal
-  source: 'git pull origin main && echo "DONE!!!'
+  source: 'git pull origin main && echo DONE'
   cwd: './'
   icon: ./images/icons8-update.svg
   args:
