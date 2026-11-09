@@ -13,6 +13,7 @@ DARCY_OUTDIR = os.path.join(RESULTS_DIR, 'darcy')
 DARCY_DEFAULTS = {
     'config_file': '../example-inputs/darcy/small.json',
     'output_dir': DARCY_OUTDIR,
+    'visualize': True,
 }
 
 INFILTRATION_SURROGATE_OUTDIR = os.path.join(RESULTS_DIR, 'infiltration_surrogate')
