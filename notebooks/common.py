@@ -9,6 +9,8 @@ AIIDA_PROFILE = 'AITW_aiida'
 
 RESULTS_DIR = '../results'
 
+CLEARWOOD_STIFFNESS_OUTDIR = os.path.join(RESULTS_DIR, 'clearwood')
+
 DARCY_OUTDIR = os.path.join(RESULTS_DIR, 'darcy')
 DARCY_DEFAULTS = {
     'config_file': '../example-inputs/darcy/small.json',

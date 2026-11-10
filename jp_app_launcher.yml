@@ -31,7 +31,7 @@
       createNewWindow: false
   catalog: 1. AITW
 
-- title: Molecular Viscosity
+- title: Molecular Viscosity Workchain
   description: |
     Jupyter Notebook interface to the `aitw-viscosity` commands for computing molecular viscosities starting from a
     SMILES code using GROMACS.

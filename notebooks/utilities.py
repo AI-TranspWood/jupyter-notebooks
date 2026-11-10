@@ -24,6 +24,31 @@ original_sys_path = sys.path.copy()
 
 warnings.filterwarnings("ignore")
 
+display(wdg.HTML("""
+<style>
+.widget-card {
+    position: relative;
+    border: 1px solid #8a8a8a;
+    border-radius: 10px;
+    padding: 18px 14px 14px 14px;
+    margin-top: 12px;
+}
+
+.widget-card,
+.widget-card > .widget-box {
+    overflow: visible !important;
+}
+
+.widget-card-title {
+    position: absolute;
+    top: -2.4em;
+    left: 12px;
+    padding: 0 6px;
+    background: var(--jp-layout-color0, white);
+    font-weight: 600;
+}
+</style>
+"""))
 
 async def initialize_with_module(modules: str | list[str], eessi_version: str = None):
     """Initialize the environment using a module load command."""
@@ -37,17 +62,17 @@ async def initialize_with_module(modules: str | list[str], eessi_version: str = 
         sys.path = original_sys_path
         await module.purge(force=True)
 
-        print('Loading required modules from EESSI...')
+        # print('Loading required modules from EESSI...')
         if eessi_version is None:
             eessi_version = os.getenv('REQUIRED_EESSI_VERSION', '2023.06')
         with open(os.devnull, 'w') as devnull:
-            with contextlib.redirect_stdout(devnull):
+            with contextlib.redirect_stdout(devnull), contextlib.redirect_stderr(devnull):
                 await module.load(f'EESSI/{eessi_version}')
 
-        for mod in modules:
-            await module.load(mod)
+                for mod in modules:
+                    await module.load(mod)
 
-        importlib.invalidate_caches()
+                importlib.invalidate_caches()
 
 def get_reference_widget(doi: str, citation: str, name: str = "REFERENCE") -> wdg.HTML:
     """Create an HTML widget for a reference with a DOI link.
@@ -408,11 +433,13 @@ def click_cli_widget(
         **kwargs
     )
 
-    title = title or click_function.__name__.replace('_', ' ').title()
+    if title is None:
+        title = click_function.__name__.replace('_', ' ').title()
+    if description_text is None:
+        description_text = click_function.__doc__ or ""
 
-    title = wdg.HTML(value=f"<hr style=\"height: 5px; background-color: #fcc;\"> <h2>{title}</h2>")
+    title = wdg.HTML(value=f"<h2>{title}</h2>")
 
-    description_text = description_text or click_function.__doc__ or ""
     description = wdg.HTML(f"<div style=\"white-space: pre-wrap;\">{description_text}</div>")
 
     generate_button = wdg.Button(description=button_description, button_style="success")
@@ -474,6 +501,8 @@ def click_cli_widget(
     generate_button.on_click(on_run_button_clicked)
 
     widget = wdg.VBox([title, description, main_vbox, generate_button, output_accordion])
+    widget.add_class('widget-card')
+    title.add_class('widget-card-title')
 
     return widget, button_event_observer
 
@@ -556,8 +585,6 @@ def output_visualizer_widget(
         data_display_func (callable, optional): A function to display the data.
         selector_label_func (callable, optional): A function to generate the label for each output in the selector.
     """
-    title_widget = wdg.HTML(value=f"<h2>{title}</h2>")
-
     if read_func is None:
         read_func = FMT_READ_FUNC_MAP.get(file_format, None)
     if read_func is None:
@@ -619,4 +646,15 @@ def output_visualizer_widget(
 
     update_output_options()
 
-    return wdg.VBox([title_widget, output_selector, output_area])
+    output_box = wdg.VBox([output_selector, output_area])
+    output_accordion = wdg.Accordion(children=[output_box], selected_index=None)
+    output_accordion.set_title(0, title or "Output Visualization")
+
+    return output_accordion
+
+def final_spacer():
+    """Add a spacer at the end of each notebook to ensure that the last widget is fully visible and not cut off by the notebook interface."""
+    spacer = wdg.Box(
+        layout=wdg.Layout(height="95vh", flex="0 0 auto")
+    )
+    display(spacer)
